@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NEXO - Plataforma de Historias Interactivas</title>
+    <link rel="stylesheet" href="style/style.css">
+    <link rel="shortcut icon" href="components/Logo.png" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+    <div id="top"></div>
+
+    <header id="header" class="navbar">
+        <div class="nav-container">
+            <div class="nav-left">
+                <a href="#top" class="brand" aria-label="Ir al inicio de la página">
+                    <img src="components/Logo-2.png" alt="NEXO" class="logo" />
+                </a>
+            </div>
+
+            <button id="menu-toggle" class="menu-toggle" aria-label="Abrir menú de navegación">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+
+            <nav class="nav-center">
+                <a href="#que-es" class="nav-link">¿Qué es Nexo?</a>
+                <a href="#acerca" class="nav-link">Acerca de</a>
+                <a href="#caracteristicas" class="nav-link">Características</a>
+                <a href="frontend/inicio.php" class="nav-cta">Ir a Inicio</a>
+            </nav>
+
+            <div class="nav-right">
+                <button id="theme-toggle" class="theme-toggle" aria-label="Cambiar tema claro/oscuro">
+                    <i class="fa-solid fa-moon"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Secciones de anclaje (placeholder, no desarrolladas aún) -->
+    <main class="content-placeholders">
+        <section id="que-es" aria-label="¿Qué es Nexo?"></section>
+        <section id="acerca" aria-label="Acerca de Nexo"></section>
+        <section id="caracteristicas" aria-label="Características de Nexo"></section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="footer-container">
+            <p>© 2026 NEXO</p>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+
+</body>
+</html>
