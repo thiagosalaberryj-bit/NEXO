@@ -41,7 +41,8 @@ if (menuToggle && navCenter) {
     });
 }
 
-// Hide Navbar on Scroll
+// Hide Navbar on Scroll - DESHABILITADO
+/*
 let lastScrollTop = 0;
 const navbar = document.getElementById('header');
 const navbarHeight = navbar.offsetHeight;
@@ -63,6 +64,7 @@ window.addEventListener('scroll', () => {
     
     lastScrollTop = scrollTop;
 });
+*/
 
 // Smooth scroll para enlaces
 document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -78,7 +80,7 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     });
 });
 
-// Active section underline via IntersectionObserver
+// Active section underline via IntersectionObserver (más preciso)
 (function setupActiveSectionObserver() {
     const ids = ['#que-es', '#acerca', '#caracteristicas'];
     const linkMap = new Map();
@@ -98,23 +100,72 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
     };
 
     const observer = new IntersectionObserver((entries) => {
-        let best = null;
-        let bestRatio = 0;
+        let mostVisible = null;
+        let maxVisible = 0;
+
         entries.forEach(entry => {
-            if (entry.isIntersecting && entry.intersectionRatio > bestRatio) {
-                best = entry;
-                bestRatio = entry.intersectionRatio;
+            if (!entry.isIntersecting) return;
+
+            const rect = entry.boundingClientRect;
+            const viewportHeight = window.innerHeight;
+            const visibleTop = Math.max(0, -rect.top);
+            const visibleBottom = Math.min(rect.height, viewportHeight - rect.top);
+            const visibleHeight = Math.max(0, visibleBottom - visibleTop);
+            const ratio = visibleHeight / viewportHeight;
+
+            if (ratio > maxVisible) {
+                maxVisible = ratio;
+                mostVisible = entry.target;
             }
         });
-        if (best) {
-            const link = linkMap.get(best.target);
+
+        if (mostVisible) {
+            const link = linkMap.get(mostVisible);
             setActive(link);
         }
-    }, { threshold: [0.25, 0.5, 0.75], rootMargin: '-30% 0px -50% 0px' });
+    }, {
+        threshold: Array.from({ length: 11 }, (_, i) => i / 10),
+        rootMargin: '-15% 0px -15% 0px'
+    });
 
     linkMap.forEach((_, section) => observer.observe(section));
-
-    // initial state
-    const firstLink = linkMap.values().next().value;
-    setActive(firstLink);
 })();
+
+// Parallax effect para la imagen flotante
+window.addEventListener('scroll', () => {
+    const heroImage = document.querySelector('.hero-image');
+    const heroSection = document.querySelector('.hero-section');
+    
+    if (heroImage && heroSection) {
+        const rect = heroSection.getBoundingClientRect();
+        const scrollTop = window.pageYOffset;
+        
+        // Solo aplicar parallax cuando la sección está visible
+        if (rect.bottom > 0 && rect.top < window.innerHeight) {
+            // Calcular offset basado en el scroll (movimiento más suave)
+            const parallaxOffset = scrollTop * 0.15; // Factor de 0.15 para movimiento sutil
+            
+            // Limitar el movimiento para que no se salga del contenedor
+            const maxOffset = 30; // máximo 30px de desplazamiento
+            const clampedOffset = Math.max(-maxOffset, Math.min(maxOffset, parallaxOffset));
+            
+            heroImage.style.setProperty('--scroll-offset', `${clampedOffset}px`);
+        }
+    }
+});
+
+// Mejorar la animación de float con interacción del usuario
+document.addEventListener('DOMContentLoaded', () => {
+    const floatingImage = document.querySelector('.floating-image');
+    
+    if (floatingImage) {
+        // Pausar animación al hover para mejor UX
+        floatingImage.addEventListener('mouseenter', () => {
+            floatingImage.style.animationPlayState = 'paused';
+        });
+        
+        floatingImage.addEventListener('mouseleave', () => {
+            floatingImage.style.animationPlayState = 'running';
+        });
+    }
+});
