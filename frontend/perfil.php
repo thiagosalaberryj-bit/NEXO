@@ -4,10 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mi Perfil - NEXO | E.S.T. N°1 Vicente López</title>
-    <link rel="stylesheet" href="../style/navbar.css">
+    <link rel="stylesheet" href="../css/navbar.css">
     <link rel="shortcut icon" href="../components/Logo.png" type="image/x-icon">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script>
+        // Aplicar tema inmediatamente para evitar flash blanco
+        (function() {
+            try {
+                const theme = localStorage.getItem('theme');
+                if (theme === 'dark') {
+                    document.documentElement.classList.add('dark-theme');
+                }
+            } catch (e) {
+                // Fallback si localStorage no está disponible
+            }
+        })();
+    </script>
 </head>
 <body>
     <div id="top"></div>

@@ -4,10 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>NEXO - Plataforma de Historias Interactivas | E.S.T. N°1 Vicente López</title>
-    <link rel="stylesheet" href="style/style.css">
+    <link rel="stylesheet" href="css/navbar.css">
     <link rel="shortcut icon" href="components/Logo.png" type="image/x-icon">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script>
+        // Aplicar tema inmediatamente para evitar flash blanco
+        (function() {
+            try {
+                const theme = localStorage.getItem('theme');
+                if (theme === 'dark') {
+                    document.documentElement.classList.add('dark-theme');
+                }
+            } catch (e) {
+                // Fallback si localStorage no está disponible
+            }
+        })();
+    </script>
 </head>
 <body>
     <div id="top"></div>
@@ -30,7 +43,7 @@
                 <a href="#que-es" class="nav-link">¿Qué es Nexo?</a>
                 <a href="#acerca" class="nav-link">Acerca de</a>
                 <a href="#caracteristicas" class="nav-link">Características</a>
-                <a href="frontend/inicio.php" class="nav-cta">Ir a Inicio</a>
+                <a href="frontend/explorar.php?from=landing" class="nav-cta">Explorar historias</a>
             </nav>
 
             <div class="nav-right">
@@ -52,9 +65,9 @@
                         Permite a los estudiantes subir sus historias, recibir feedback de la comunidad escolar y completar formularios interactivos.
                     </p>
                     <div class="hero-buttons">
-                        <a href="frontend/inicio.php" class="btn btn-primary">
+                        <a href="frontend/explorar.php?from=landing" class="btn btn-primary">
                             <i class="fas fa-rocket"></i>
-                            Explorar Plataforma
+                            Explorar historias
                         </a>
                         <a href="#acerca" class="btn btn-secondary">
                             <i class="fas fa-info-circle"></i>
