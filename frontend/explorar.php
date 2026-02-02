@@ -1,3 +1,6 @@
+<?php
+require_once __DIR__ . '/../backend/session/session_manager.php';
+?>
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -54,19 +57,33 @@
                     <i class="fas fa-plus"></i>
                     Subir Historia
                 </a>
+                <!-- Botón de iniciar sesión para menú móvil -->
+                <?php if (!isLoggedIn()) : ?>
+                    <button class="login-btn login-btn-mobile" data-open-login>Iniciar sesión</button>
+                <?php else : ?>
+                    <!-- Botón de cerrar sesión para menú móvil -->
+                    <a href="../backend/session/logout.php" class="logout-btn logout-btn-mobile">
+                        <i class="fas fa-sign-out-alt"></i>
+                        Cerrar Sesión
+                    </a>
+                <?php endif; ?>
             </nav>
 
             <div class="nav-right">
-                <div class="user-menu">
-                    <button id="user-toggle" class="user-toggle" aria-label="Menú de usuario">
-                        <i class="fas fa-user"></i>
-                        <span>Usuario</span>
-                    </button>
-                    <div class="user-dropdown">
-                        <a href="estadisticas.php"><i class="fas fa-chart-bar"></i> Estadísticas</a>
-                        <a href="logout.php"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
+                <?php if (isLoggedIn()) : ?>
+                    <div class="user-menu user-menu-desktop">
+                        <button id="user-toggle" class="user-toggle" aria-label="Menú de usuario">
+                            <i class="fas fa-user"></i>
+                            <span><?php echo htmlspecialchars(getCurrentUserName(), ENT_QUOTES, 'UTF-8'); ?></span>
+                        </button>
+                        <div class="user-dropdown">
+                            <a href="estadisticas.php"><i class="fas fa-chart-bar"></i> Estadísticas</a>
+                            <a href="../backend/session/logout.php"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a>
+                        </div>
                     </div>
-                </div>
+                <?php else : ?>
+                    <button class="login-btn login-btn-desktop" data-open-login>Iniciar sesión</button>
+                <?php endif; ?>
                 <button id="theme-toggle" class="theme-toggle" aria-label="Cambiar tema claro/oscuro">
                     <i class="fa-solid fa-moon"></i>
                 </button>
@@ -83,6 +100,16 @@
     <script src="../js/theme.js"></script>
     <script src="../js/navbar.js"></script>
     <script src="../js/explorar.js"></script>
+    <script src="../js/notifications.js"></script>
+    <script src="../js/modals.js"></script>
+    <script>
+        // Mostrar notificación de logout si viene de cerrar sesión
+        if (window.location.search.includes('logout=success')) {
+            showNotification('success', 'Sesión cerrada correctamente');
+            // Limpiar la URL para evitar mostrar la notificación al recargar
+            history.replaceState(null, '', window.location.pathname + window.location.search.replace(/[?&]logout=success/, ''));
+        }
+    </script>
 
 </body>
 </html>
