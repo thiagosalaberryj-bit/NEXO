@@ -6,8 +6,18 @@
  * guardando la preferencia del usuario en localStorage.
  */
 
+// Variable para controlar si ya se inicializó el tema
+let themeInitialized = false;
+
 // Función principal para inicializar el toggle de tema
 function initThemeToggle() {
+    // Si ya se inicializó, no hacer nada
+    if (themeInitialized) {
+        // Pero sí actualizar el estado visual del botón si existe
+        updateThemeButtonState();
+        return;
+    }
+
     const themeToggle = document.getElementById('theme-toggle');
     const html = document.documentElement;
 
@@ -59,6 +69,27 @@ function initThemeToggle() {
             }, 300); // Tiempo de la transición CSS
         }, 50); // Pequeño delay inicial
     });
+
+    // Marcar como inicializado
+    themeInitialized = true;
+}
+
+// Función para actualizar el estado visual del botón de tema
+function updateThemeButtonState() {
+    const themeToggle = document.getElementById('theme-toggle');
+    if (!themeToggle) return;
+
+    const themeIcon = themeToggle.querySelector('i');
+    if (!themeIcon) return;
+
+    const currentTheme = localStorage.getItem('theme') || 'light';
+    if (currentTheme === 'dark') {
+        themeIcon.classList.remove('fa-moon');
+        themeIcon.classList.add('fa-sun');
+    } else {
+        themeIcon.classList.remove('fa-sun');
+        themeIcon.classList.add('fa-moon');
+    }
 }
 
 // Función para obtener el tema actual
@@ -104,5 +135,5 @@ document.addEventListener('DOMContentLoaded', initThemeToggle);
 
 // Exportar funciones para uso externo si es necesario
 if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { initThemeToggle, getCurrentTheme, setTheme };
+    module.exports = { initThemeToggle, getCurrentTheme, setTheme, updateThemeButtonState };
 }
