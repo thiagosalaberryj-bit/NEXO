@@ -221,7 +221,11 @@ function updateNavbarAfterAuth() {
 
                     // Re-inicializar event listeners
                     initAuthModals();
-                    updateThemeButtonState(); // Actualizar estado del botón de tema
+                    if (typeof initThemeToggle === 'function') {
+                        initThemeToggle(); // Re-vincular toggle de tema tras re-render
+                    } else {
+                        updateThemeButtonState();
+                    }
                     if (typeof initMobileMenu === 'function') {
                         initMobileMenu();
                     }

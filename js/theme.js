@@ -6,23 +6,20 @@
  * guardando la preferencia del usuario en localStorage.
  */
 
-// Variable para controlar si ya se inicializó el tema
-let themeInitialized = false;
-
 // Función principal para inicializar el toggle de tema
 function initThemeToggle() {
-    // Si ya se inicializó, no hacer nada
-    if (themeInitialized) {
-        // Pero sí actualizar el estado visual del botón si existe
-        updateThemeButtonState();
-        return;
-    }
-
     const themeToggle = document.getElementById('theme-toggle');
     const html = document.documentElement;
 
     if (!themeToggle) {
         console.warn('Theme toggle button not found');
+        return;
+    }
+
+    // Si este botón ya fue inicializado, solo sincronizar estados
+    if (themeToggle.dataset.initialized === 'true') {
+        syncThemeWithStorage();
+        updateThemeButtonState();
         return;
     }
 
@@ -35,6 +32,12 @@ function initThemeToggle() {
         if (themeIcon) {
             themeIcon.classList.remove('fa-moon');
             themeIcon.classList.add('fa-sun');
+        }
+    } else {
+        html.classList.remove('dark-theme');
+        if (themeIcon) {
+            themeIcon.classList.remove('fa-sun');
+            themeIcon.classList.add('fa-moon');
         }
     }
 
@@ -70,8 +73,8 @@ function initThemeToggle() {
         }, 50); // Pequeño delay inicial
     });
 
-    // Marcar como inicializado
-    themeInitialized = true;
+    // Marcar este botón como inicializado para evitar listeners duplicados
+    themeToggle.dataset.initialized = 'true';
 }
 
 // Función para actualizar el estado visual del botón de tema
@@ -89,6 +92,17 @@ function updateThemeButtonState() {
     } else {
         themeIcon.classList.remove('fa-sun');
         themeIcon.classList.add('fa-moon');
+    }
+}
+
+// Mantener la clase del <html> sincronizada con la preferencia persistida
+function syncThemeWithStorage() {
+    const html = document.documentElement;
+    const currentTheme = localStorage.getItem('theme') || 'light';
+    if (currentTheme === 'dark') {
+        html.classList.add('dark-theme');
+    } else {
+        html.classList.remove('dark-theme');
     }
 }
 
@@ -135,5 +149,11 @@ document.addEventListener('DOMContentLoaded', initThemeToggle);
 
 // Exportar funciones para uso externo si es necesario
 if (typeof module !== 'undefined' && module.exports) {
-    module.exports = { initThemeToggle, getCurrentTheme, setTheme, updateThemeButtonState };
+    module.exports = {
+        initThemeToggle,
+        getCurrentTheme,
+        setTheme,
+        updateThemeButtonState,
+        syncThemeWithStorage
+    };
 }

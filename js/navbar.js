@@ -8,6 +8,9 @@
  * - Navegación responsive
  */
 
+// Flags para evitar listeners duplicados
+let userMenuDocumentListenersBound = false;
+
 // Función principal para inicializar el navbar
 function initNavbar() {
     initMobileMenu();
@@ -55,25 +58,42 @@ function initUserMenu() {
         return;
     }
 
-    // Event listener para el botón de usuario
-    userToggle.addEventListener('click', (e) => {
-        e.stopPropagation(); // Evitar que se propague al document
-        userDropdown.classList.toggle('show');
-    });
+    // Evitar agregar múltiples listeners al mismo botón cuando el navbar se re-renderiza
+    if (!userToggle.dataset.bound) {
+        userToggle.addEventListener('click', handleUserToggleClick);
+        userToggle.dataset.bound = 'true';
+    }
 
-    // Cerrar dropdown al hacer click fuera
-    document.addEventListener('click', (e) => {
-        if (!userToggle.contains(e.target) && !userDropdown.contains(e.target)) {
-            userDropdown.classList.remove('show');
-        }
-    });
+    if (!userMenuDocumentListenersBound) {
+        document.addEventListener('click', handleUserMenuOutsideClick);
+        document.addEventListener('keydown', handleUserMenuEscape);
+        userMenuDocumentListenersBound = true;
+    }
+}
 
-    // Cerrar dropdown al presionar Escape
-    document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-            userDropdown.classList.remove('show');
-        }
-    });
+function handleUserToggleClick(e) {
+    e.preventDefault();
+    e.stopPropagation();
+    const dropdown = document.querySelector('.user-dropdown');
+    if (!dropdown) return;
+    dropdown.classList.toggle('show');
+}
+
+function handleUserMenuOutsideClick(e) {
+    const toggle = document.getElementById('user-toggle');
+    const dropdown = document.querySelector('.user-dropdown');
+    if (!toggle || !dropdown) return;
+    if (!toggle.contains(e.target) && !dropdown.contains(e.target)) {
+        dropdown.classList.remove('show');
+    }
+}
+
+function handleUserMenuEscape(e) {
+    if (e.key !== 'Escape') return;
+    const dropdown = document.querySelector('.user-dropdown');
+    if (dropdown) {
+        dropdown.classList.remove('show');
+    }
 }
 
 // Función para smooth scroll en enlaces internos
