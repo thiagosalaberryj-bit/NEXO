@@ -478,6 +478,105 @@
     gap: 4px;
 }
 
+/* Badge de formulario */
+.story-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-dark));
+    color: white;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    z-index: 2;
+}
+
+.story-badge i {
+    font-size: 0.8rem;
+}
+
+/* Botones de acción */
+.story-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.action-btn {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 10px 8px;
+    background: var(--card-bg);
+    border: 2px solid var(--primary-color);
+    border-radius: 12px;
+    color: var(--primary-color);
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.action-btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(124, 58, 237, 0.1), transparent);
+    transition: left 0.5s ease;
+}
+
+.action-btn:hover::before {
+    left: 100%;
+}
+
+.action-btn:hover {
+    background: var(--primary-color);
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(124, 58, 237, 0.3);
+}
+
+.action-btn i {
+    font-size: 1.1rem;
+    margin-bottom: 2px;
+}
+
+.action-btn span {
+    font-size: 0.75rem;
+    line-height: 1;
+}
+
+/* Estado activo del botón like */
+.action-btn.like-btn[data-liked="true"] {
+    background: var(--error-color);
+    border-color: var(--error-color);
+    color: white;
+}
+
+.action-btn.like-btn[data-liked="true"] i {
+    color: white;
+}
+
+.action-btn.like-btn[data-liked="true"]:hover {
+    background: #dc2626;
+    border-color: #dc2626;
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+}
+
 /* Sin resultados */
 .no-results {
     text-align: center;
@@ -655,6 +754,20 @@
 /* Tema Oscuro */
 .dark-theme .story-meta {
     border-top-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Animación de like */
+@keyframes likePulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.2);
+        color: var(--error-color);
+    }
+    100% {
+        transform: scale(1);
+    }
 }
 
 /* Secciones ocultas */

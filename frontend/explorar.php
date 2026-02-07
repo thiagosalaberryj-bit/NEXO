@@ -151,10 +151,15 @@ require_once __DIR__ . '/../backend/session/session_manager.php';
                 <div id="stories-grid" class="stories-grid">
                     <!-- Las historias se cargarán dinámicamente con JavaScript -->
                     <!-- Ejemplo de tarjeta de historia -->
-                    <div class="story-card">
+                    <div class="story-card" data-story-id="1">
                         <div class="story-cover">
                             <img src="https://images.unsplash.com/photo-1516979187457-637abb4f9353?w=400" alt="Historia 1">
                             <div class="story-overlay"></div>
+                            <!-- Indicador de formulario -->
+                            <div class="story-badge">
+                                <i class="fas fa-file-alt"></i>
+                                <span>Formulario</span>
+                            </div>
                         </div>
                         <div class="story-content">
                             <h3 class="story-title">El Reino Perdido</h3>
@@ -164,13 +169,28 @@ require_once __DIR__ . '/../backend/session/session_manager.php';
                                 <span class="story-genre"><i class="fas fa-tag"></i> Fantasía</span>
                                 <div class="story-stats">
                                     <span><i class="fas fa-eye"></i> 1.2k</span>
-                                    <span><i class="fas fa-heart"></i> 234</span>
+                                    <span class="stat-likes" data-likes="234"><i class="fas fa-heart"></i> 234</span>
                                 </div>
+                            </div>
+                            <!-- Botones de acción -->
+                            <div class="story-actions">
+                                <button class="action-btn like-btn" data-liked="false">
+                                    <i class="far fa-heart"></i>
+                                    <span>Like</span>
+                                </button>
+                                <button class="action-btn comment-btn">
+                                    <i class="far fa-comment"></i>
+                                    <span>Comentar</span>
+                                </button>
+                                <button class="action-btn read-btn">
+                                    <i class="fas fa-book-open"></i>
+                                    <span>Leer</span>
+                                </button>
                             </div>
                         </div>
                     </div>
 
-                    <div class="story-card">
+                    <div class="story-card" data-story-id="2">
                         <div class="story-cover">
                             <img src="https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=400" alt="Historia 2">
                             <div class="story-overlay"></div>
@@ -183,13 +203,28 @@ require_once __DIR__ . '/../backend/session/session_manager.php';
                                 <span class="story-genre"><i class="fas fa-tag"></i> Ciencia Ficción</span>
                                 <div class="story-stats">
                                     <span><i class="fas fa-eye"></i> 856</span>
-                                    <span><i class="fas fa-heart"></i> 189</span>
+                                    <span class="stat-likes" data-likes="189"><i class="fas fa-heart"></i> 189</span>
                                 </div>
+                            </div>
+                            <!-- Botones de acción -->
+                            <div class="story-actions">
+                                <button class="action-btn like-btn" data-liked="false">
+                                    <i class="far fa-heart"></i>
+                                    <span>Like</span>
+                                </button>
+                                <button class="action-btn comment-btn">
+                                    <i class="far fa-comment"></i>
+                                    <span>Comentar</span>
+                                </button>
+                                <button class="action-btn read-btn">
+                                    <i class="fas fa-book-open"></i>
+                                    <span>Leer</span>
+                                </button>
                             </div>
                         </div>
                     </div>
 
-                    <div class="story-card">
+                    <div class="story-card" data-story-id="3">
                         <div class="story-cover">
                             <img src="https://images.unsplash.com/photo-1519682337058-a94d519337bc?w=400" alt="Historia 3">
                             <div class="story-overlay"></div>
@@ -202,16 +237,36 @@ require_once __DIR__ . '/../backend/session/session_manager.php';
                                 <span class="story-genre"><i class="fas fa-tag"></i> Misterio</span>
                                 <div class="story-stats">
                                     <span><i class="fas fa-eye"></i> 2.1k</span>
-                                    <span><i class="fas fa-heart"></i> 456</span>
+                                    <span class="stat-likes" data-likes="456"><i class="fas fa-heart"></i> 456</span>
                                 </div>
+                            </div>
+                            <!-- Botones de acción -->
+                            <div class="story-actions">
+                                <button class="action-btn like-btn" data-liked="false">
+                                    <i class="far fa-heart"></i>
+                                    <span>Like</span>
+                                </button>
+                                <button class="action-btn comment-btn">
+                                    <i class="far fa-comment"></i>
+                                    <span>Comentar</span>
+                                </button>
+                                <button class="action-btn read-btn">
+                                    <i class="fas fa-book-open"></i>
+                                    <span>Leer</span>
+                                </button>
                             </div>
                         </div>
                     </div>
 
-                    <div class="story-card">
+                    <div class="story-card" data-story-id="4">
                         <div class="story-cover">
                             <img src="https://images.unsplash.com/photo-1474552226712-ac0f0961a954?w=400" alt="Historia 4">
                             <div class="story-overlay"></div>
+                            <!-- Indicador de formulario -->
+                            <div class="story-badge">
+                                <i class="fas fa-file-alt"></i>
+                                <span>Formulario</span>
+                            </div>
                         </div>
                         <div class="story-content">
                             <h3 class="story-title">Corazones Entrelazados</h3>
@@ -221,13 +276,28 @@ require_once __DIR__ . '/../backend/session/session_manager.php';
                                 <span class="story-genre"><i class="fas fa-tag"></i> Romance</span>
                                 <div class="story-stats">
                                     <span><i class="fas fa-eye"></i> 3.4k</span>
-                                    <span><i class="fas fa-heart"></i> 678</span>
+                                    <span class="stat-likes" data-likes="678"><i class="fas fa-heart"></i> 678</span>
                                 </div>
+                            </div>
+                            <!-- Botones de acción -->
+                            <div class="story-actions">
+                                <button class="action-btn like-btn" data-liked="false">
+                                    <i class="far fa-heart"></i>
+                                    <span>Like</span>
+                                </button>
+                                <button class="action-btn comment-btn">
+                                    <i class="far fa-comment"></i>
+                                    <span>Comentar</span>
+                                </button>
+                                <button class="action-btn read-btn">
+                                    <i class="fas fa-book-open"></i>
+                                    <span>Leer</span>
+                                </button>
                             </div>
                         </div>
                     </div>
 
-                    <div class="story-card">
+                    <div class="story-card" data-story-id="5">
                         <div class="story-cover">
                             <img src="https://images.unsplash.com/photo-1475694867812-f82b8696d610?w=400" alt="Historia 5">
                             <div class="story-overlay"></div>
@@ -240,16 +310,36 @@ require_once __DIR__ . '/../backend/session/session_manager.php';
                                 <span class="story-genre"><i class="fas fa-tag"></i> Terror</span>
                                 <div class="story-stats">
                                     <span><i class="fas fa-eye"></i> 1.8k</span>
-                                    <span><i class="fas fa-heart"></i> 345</span>
+                                    <span class="stat-likes" data-likes="345"><i class="fas fa-heart"></i> 345</span>
                                 </div>
+                            </div>
+                            <!-- Botones de acción -->
+                            <div class="story-actions">
+                                <button class="action-btn like-btn" data-liked="false">
+                                    <i class="far fa-heart"></i>
+                                    <span>Like</span>
+                                </button>
+                                <button class="action-btn comment-btn">
+                                    <i class="far fa-comment"></i>
+                                    <span>Comentar</span>
+                                </button>
+                                <button class="action-btn read-btn">
+                                    <i class="fas fa-book-open"></i>
+                                    <span>Leer</span>
+                                </button>
                             </div>
                         </div>
                     </div>
 
-                    <div class="story-card">
+                    <div class="story-card" data-story-id="6">
                         <div class="story-cover">
                             <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400" alt="Historia 6">
                             <div class="story-overlay"></div>
+                            <!-- Indicador de formulario -->
+                            <div class="story-badge">
+                                <i class="fas fa-file-alt"></i>
+                                <span>Formulario</span>
+                            </div>
                         </div>
                         <div class="story-content">
                             <h3 class="story-title">Viaje al Amanecer</h3>
@@ -259,8 +349,23 @@ require_once __DIR__ . '/../backend/session/session_manager.php';
                                 <span class="story-genre"><i class="fas fa-tag"></i> Aventura</span>
                                 <div class="story-stats">
                                     <span><i class="fas fa-eye"></i> 992</span>
-                                    <span><i class="fas fa-heart"></i> 167</span>
+                                    <span class="stat-likes" data-likes="167"><i class="fas fa-heart"></i> 167</span>
                                 </div>
+                            </div>
+                            <!-- Botones de acción -->
+                            <div class="story-actions">
+                                <button class="action-btn like-btn" data-liked="false">
+                                    <i class="far fa-heart"></i>
+                                    <span>Like</span>
+                                </button>
+                                <button class="action-btn comment-btn">
+                                    <i class="far fa-comment"></i>
+                                    <span>Comentar</span>
+                                </button>
+                                <button class="action-btn read-btn">
+                                    <i class="fas fa-book-open"></i>
+                                    <span>Leer</span>
+                                </button>
                             </div>
                         </div>
                     </div>

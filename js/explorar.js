@@ -37,6 +37,7 @@ function initializeExplorar() {
     animateCounters();
     setupScrollIndicator();
     setupSearchAndFilters();
+    setupCardActions();
 }
 
 // Configurar indicador de scroll
@@ -243,4 +244,61 @@ function resetFilters() {
     
     const storiesGrid = document.getElementById('stories-grid');
     if (storiesGrid) storiesGrid.style.display = 'grid';
+}
+
+// Función para configurar las acciones de las tarjetas
+function setupCardActions() {
+    // Configurar acciones para tarjetas existentes
+    document.querySelectorAll('.story-card').forEach(card => {
+        const storyId = card.getAttribute('data-story-id');
+        const likeBtn = card.querySelector('.like-btn');
+        const commentBtn = card.querySelector('.comment-btn');
+        const readBtn = card.querySelector('.read-btn');
+        const statLikes = card.querySelector('.stat-likes');
+        
+        // Botón de like
+        if (likeBtn) {
+            likeBtn.addEventListener('click', function(e) {
+                e.stopPropagation(); // Evitar que se propague al card
+                const isLiked = this.getAttribute('data-liked') === 'true';
+                const currentLikes = parseInt(statLikes.getAttribute('data-likes'));
+                
+                if (isLiked) {
+                    // Quitar like
+                    this.setAttribute('data-liked', 'false');
+                    this.innerHTML = '<i class="far fa-heart"></i><span>Like</span>';
+                    statLikes.setAttribute('data-likes', currentLikes - 1);
+                    statLikes.innerHTML = `<i class="fas fa-heart"></i> ${currentLikes - 1}`;
+                } else {
+                    // Dar like
+                    this.setAttribute('data-liked', 'true');
+                    this.innerHTML = '<i class="fas fa-heart"></i><span>Like</span>';
+                    statLikes.setAttribute('data-likes', currentLikes + 1);
+                    statLikes.innerHTML = `<i class="fas fa-heart"></i> ${currentLikes + 1}`;
+                    
+                    // Animación de like
+                    this.style.animation = 'likePulse 0.6s ease';
+                    setTimeout(() => this.style.animation = '', 600);
+                }
+            });
+        }
+        
+        // Botón de comentar
+        if (commentBtn) {
+            commentBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                // Por ahora mostrar notificación
+                console.log('Funcionalidad de comentarios próximamente disponible');
+            });
+        }
+        
+        // Botón de leer
+        if (readBtn) {
+            readBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                // Redirigir a la página de la historia
+                console.log(`Redirigiendo a historia ${storyId}`);
+            });
+        }
+    });
 }
