@@ -83,8 +83,8 @@ require_once __DIR__ . '/../backend/session/session_manager.php';
             </div>
         </section>
 
-        <!-- Secciones ocultas inicialmente -->
-        <div id="content-sections" class="content-sections hidden">
+        <!-- Secciones siempre visibles -->
+        <div id="content-sections" class="content-sections visible">
         <section class="search-section">
             <div class="search-container">
                 <div class="search-header">
@@ -422,6 +422,12 @@ require_once __DIR__ . '/../backend/session/session_manager.php';
             history.replaceState(null, '', window.location.pathname + window.location.search.replace(/[?&]logout=success/, ''));
         }
     </script>
+
+    <footer class="site-footer">
+        <div class="footer-container">
+            <p>© 2026 NEXO - Escuela Secundaria Técnica N°1 de Vicente López</p>
+        </div>
+    </footer>
 
 </body>
 </html>

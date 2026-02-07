@@ -147,14 +147,6 @@
 
     <script src="js/main.js"></script>
     <script src="js/notifications.js"></script>
-    <script>
-        // Mostrar notificación de logout si viene de cerrar sesión
-        if (window.location.search.includes('logout=success')) {
-            showNotification('success', 'Sesión cerrada correctamente');
-            // Limpiar la URL para evitar mostrar la notificación al recargar
-            history.replaceState(null, '', window.location.pathname);
-        }
-    </script>
 
 </body>
 </html>

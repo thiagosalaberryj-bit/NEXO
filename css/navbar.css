@@ -592,3 +592,17 @@ button { font: inherit; }
         font-size: 0.9rem;
     }
 }
+
+/* Footer */
+.site-footer {
+    background: var(--primary-dark);
+    color: #ffffff; /* Blanco siempre */
+    margin-top: 40px;
+    box-shadow: var(--shadow);
+}
+.footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px 20px;
+    text-align: center;
+}

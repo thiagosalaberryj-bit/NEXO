@@ -40,55 +40,27 @@ function initializeExplorar() {
     setupCardActions();
 }
 
-// Configurar indicador de scroll
+// Configurar indicador de scroll (ahora solo para navegación)
 function setupScrollIndicator() {
     const scrollIndicator = document.getElementById('scroll-indicator');
     const contentSections = document.getElementById('content-sections');
-    
+
     if (scrollIndicator && contentSections) {
         scrollIndicator.addEventListener('click', function() {
-            showContentSections();
+            // Solo hacer scroll suave hacia las secciones
+            contentSections.scrollIntoView({
+                behavior: 'smooth',
+                block: 'start'
+            });
         });
-        
-        // También mostrar al hacer scroll
-        let scrollTimeout;
-        window.addEventListener('scroll', function() {
-            clearTimeout(scrollTimeout);
-            scrollTimeout = setTimeout(function() {
-                if (window.scrollY > 100) {
-                    showContentSections();
-                }
-            }, 100);
-        });
+
+        // La flecha siempre permanece visible
+        // No hay lógica de ocultar/mostrar contenido
     }
 }
 
-// Función para mostrar las secciones de contenido
-function showContentSections() {
-    const contentSections = document.getElementById('content-sections');
-    const scrollIndicator = document.getElementById('scroll-indicator');
-    
-    if (contentSections && !contentSections.classList.contains('visible')) {
-        contentSections.classList.remove('hidden');
-        contentSections.classList.add('visible');
-        
-        // Ocultar la flecha después de mostrar el contenido
-        if (scrollIndicator) {
-            scrollIndicator.style.opacity = '0';
-            setTimeout(() => {
-                scrollIndicator.style.display = 'none';
-            }, 500);
-        }
-        
-        // Hacer scroll suave hacia las secciones
-        setTimeout(() => {
-            contentSections.scrollIntoView({ 
-                behavior: 'smooth', 
-                block: 'start' 
-            });
-        }, 300);
-    }
-}
+// Función para mostrar las secciones de contenido (eliminada - ahora siempre visible)
+// function showContentSections() { ... }
 
 // Animar contadores de estadísticas
 function animateCounters() {

@@ -73,5 +73,11 @@ require_once __DIR__ . '/../backend/session/session_manager.php';
         }
     </script>
 
+    <footer class="site-footer">
+        <div class="footer-container">
+            <p>© 2026 NEXO - Escuela Secundaria Técnica N°1 de Vicente López</p>
+        </div>
+    </footer>
+
 </body>
 </html>
