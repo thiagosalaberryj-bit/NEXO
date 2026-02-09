@@ -36,9 +36,9 @@ require_once __DIR__ . '/../backend/session/session_manager.php';
         <div class="loading-subtitle">Preparando tu experiencia...</div>
     </div>
 
-    <header id="header" class="navbar">
-        <!-- Navbar se carga dinámicamente con AJAX -->
-    </header>
+        <header id="header" class="navbar">
+            <?php include __DIR__ . '/../components/navbar.php'; ?>
+        </header>
 
     <!-- Contenido Principal -->
     <main class="explorar-main">
@@ -382,6 +382,12 @@ require_once __DIR__ . '/../backend/session/session_manager.php';
         </div> <!-- Cierre de content-sections -->
     </main>
 
+    <footer class="site-footer">
+        <div class="footer-container">
+            <p>© 2026 NEXO - Escuela Secundaria Técnica N°1 de Vicente López</p>
+        </div>
+    </footer>
+
     <!-- Scripts separados -->
     <script src="../js/theme.js"></script>
     <script src="../js/navbar.js"></script>
@@ -389,30 +395,13 @@ require_once __DIR__ . '/../backend/session/session_manager.php';
     <script src="../js/notifications.js"></script>
     <script src="../js/modals.js"></script>
     <script>
-        // Cargar navbar dinámicamente
+        // Inicializar utilidades ahora que el navbar se incluye en el servidor
         document.addEventListener('DOMContentLoaded', function() {
-            fetch('../backend/session/navbar_state.php?page=explorar')
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        document.querySelector('.navbar').innerHTML = data.navbarHTML;
-                        // Inicializar funcionalidades después de cargar el navbar
-                        initThemeToggle(); // Inicializar cambio de tema
-                        if (typeof initMobileMenu === 'function') {
-                            initMobileMenu();
-                        }
-                        if (typeof initUserMenu === 'function') {
-                            initUserMenu();
-                        }
-                        if (typeof setActiveNavLink === 'function') {
-                            setActiveNavLink();
-                        }
-                        initAuthModals();
-                    }
-                })
-                .catch(error => {
-                    console.error('Error cargando navbar:', error);
-                });
+            if (typeof initThemeToggle === 'function') initThemeToggle();
+            if (typeof initMobileMenu === 'function') initMobileMenu();
+            if (typeof initUserMenu === 'function') initUserMenu();
+            if (typeof setActiveNavLink === 'function') setActiveNavLink();
+            if (typeof initAuthModals === 'function') initAuthModals();
         });
 
         // Mostrar notificación de logout si viene de cerrar sesión
@@ -422,12 +411,5 @@ require_once __DIR__ . '/../backend/session/session_manager.php';
             history.replaceState(null, '', window.location.pathname + window.location.search.replace(/[?&]logout=success/, ''));
         }
     </script>
-
-    <footer class="site-footer">
-        <div class="footer-container">
-            <p>© 2026 NEXO - Escuela Secundaria Técnica N°1 de Vicente López</p>
-        </div>
-    </footer>
-
 </body>
 </html>

@@ -142,11 +142,12 @@ function handleLoginSubmit(event) {
     }).then(function(data) {
         if (data.success) {
             closeLoginModal();
-            // Actualizar navbar dinámicamente primero
-            updateNavbarAfterAuth().then(() => {
-                // Mostrar notificación después de que el navbar se actualice
-                showNotification('success', '¡Bienvenido! Sesión iniciada correctamente');
-            });
+            // Mostrar notificación rápida y recargar para que el servidor renderice el navbar correcto
+            showNotification('success', '¡Bienvenido! Sesión iniciada correctamente');
+            setTimeout(function() {
+                // Recargar la página actual para reflejar el estado de sesión en el navbar
+                window.location.reload();
+            }, 800);
         } else {
             showNotification('error', data.message || 'Error al iniciar sesión');
         }
@@ -191,61 +192,14 @@ function handleAjaxLogout(event) {
     }).then(function(response) {
         return response.json();
     }).then(function(data) {
-        // Actualizar navbar dinámicamente primero
-        updateNavbarAfterAuth().then(() => {
-            // Mostrar notificación después de que el navbar se actualice
-            showNotification('success', 'Sesión cerrada correctamente');
-        });
-    });
-}
-
-// Función para actualizar el navbar después de login/logout
-function updateNavbarAfterAuth() {
-    return new Promise((resolve, reject) => {
-        // Determinar la página actual
-        var currentPage = 'explorar'; // default
-        if (window.location.pathname.includes('perfil.php')) {
-            currentPage = 'perfil';
-        } else if (window.location.pathname.includes('subir-historia.php')) {
-            currentPage = 'subir-historia';
+        if (data.success) {
+            // Redirigir a explorar con bandera de logout para que el servidor renderice el navbar de invitado
+            window.location.href = '/PROYECTO_NEXO/frontend/explorar.php?logout=success';
+        } else {
+            showNotification('error', data.message || 'Error al cerrar sesión');
         }
-
-        fetch('/PROYECTO_NEXO/backend/session/navbar_state.php?page=' + currentPage)
-            .then(function(response) {
-                return response.json();
-            })
-            .then(function(data) {
-                if (data.success) {
-                    // Actualizar el navbar
-                    document.querySelector('.navbar').innerHTML = data.navbarHTML;
-
-                    // Re-inicializar event listeners
-                    initAuthModals();
-                    if (typeof initThemeToggle === 'function') {
-                        initThemeToggle(); // Re-vincular toggle de tema tras re-render
-                    } else {
-                        updateThemeButtonState();
-                    }
-                    if (typeof initMobileMenu === 'function') {
-                        initMobileMenu();
-                    }
-                    if (typeof initUserMenu === 'function') {
-                        initUserMenu();
-                    }
-                    if (typeof setActiveNavLink === 'function') {
-                        setActiveNavLink();
-                    }
-
-                    resolve(); // Resolvemos la promesa cuando todo esté listo
-                } else {
-                    reject(new Error('Error en la respuesta del servidor'));
-                }
-            })
-            .catch(function(error) {
-                // Fallback: recargar la página si AJAX falla
-                window.location.reload();
-                reject(error);
-            });
+    }).catch(function() {
+        showNotification('error', 'Error de conexión');
     });
 }
 
