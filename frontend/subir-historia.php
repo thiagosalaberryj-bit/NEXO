@@ -2,15 +2,15 @@
 require_once __DIR__ . '/../backend/session/session_manager.php';
 ?>
 <!DOCTYPE html>
-<ht lang="es">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Subir Historia - NEXO | E.S.T. N°1 Vicente López</title>
+    <link rel="shortcut icon" href="../components/Logo.png?v=1" type="image/x-icon">
     <link rel="stylesheet" href="../css/navbar.css">
     <link rel="stylesheet" href="../css/explorar.css">
     <link rel="stylesheet" href="../css/subir-historia.css">
-    <link rel="shortcut icon" href="../components/Logo.png" type="image/x-icon">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <script>
