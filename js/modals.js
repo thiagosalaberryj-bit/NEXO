@@ -14,7 +14,7 @@ function createAuthModals() {
                 <button class="modal-close" data-close="login">&times;</button>
                 <h2>Iniciar sesión</h2>
                 <form id="login-form">
-                    <input type="email" name="email" placeholder="Email" required>
+                    <input type="text" name="identifier" placeholder="Email o Username" required>
                     <input type="password" name="password" placeholder="Contraseña" required>
                     <button type="submit">Iniciar sesión</button>
                 </form>
@@ -29,9 +29,12 @@ function createAuthModals() {
                 <button class="modal-close" data-close="register">&times;</button>
                 <h2>Crear cuenta</h2>
                 <form id="register-form">
-                    <input type="text" name="name" placeholder="Nombre completo" required>
+                    <input type="text" name="firstName" placeholder="Nombre" required>
+                    <input type="text" name="lastName" placeholder="Apellido" required>
+                    <input type="text" name="username" placeholder="Username" required>
                     <input type="email" name="email" placeholder="Email" required>
                     <input type="password" name="password" placeholder="Contraseña (mínimo 6 caracteres)" required>
+                    <input type="password" name="confirmPassword" placeholder="Confirmar contraseña" required>
                     <button type="submit">Registrarse</button>
                 </form>
                 <p>
@@ -159,6 +162,15 @@ function handleLoginSubmit(event) {
 function handleRegisterSubmit(event) {
     event.preventDefault();
     var form = event.target;
+    var password = form.querySelector('input[name="password"]').value;
+    var confirmPassword = form.querySelector('input[name="confirmPassword"]').value;
+
+    // Validar que las contraseñas coincidan
+    if (password !== confirmPassword) {
+        showNotification('error', 'Las contraseñas no coinciden');
+        return;
+    }
+
     var formData = new FormData(form);
     formData.append('action', 'register');
 

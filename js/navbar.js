@@ -10,6 +10,7 @@
 
 // Flags para evitar listeners duplicados
 let userMenuDocumentListenersBound = false;
+let mobileMenuDocumentListenersBound = false;
 
 // Función principal para inicializar el navbar
 function initNavbar() {
@@ -28,24 +29,37 @@ function initMobileMenu() {
         return;
     }
 
+    // Evitar agregar listeners múltiples si se re-inicializa
+    if (menuToggle.dataset.bound === 'true') {
+        return;
+    }
+
     // Event listener para el botón hamburger
     menuToggle.addEventListener('click', () => {
         navCenter.classList.toggle('open');
+        menuToggle.setAttribute('aria-expanded', navCenter.classList.contains('open'));
     });
 
     // Cerrar menú al hacer click en un enlace
     navCenter.querySelectorAll('a').forEach(link => {
         link.addEventListener('click', () => {
             navCenter.classList.remove('open');
+            menuToggle.setAttribute('aria-expanded', 'false');
         });
     });
 
     // Cerrar menú al hacer click fuera (en móviles)
-    document.addEventListener('click', (e) => {
-        if (!menuToggle.contains(e.target) && !navCenter.contains(e.target)) {
-            navCenter.classList.remove('open');
-        }
-    });
+    if (!mobileMenuDocumentListenersBound) {
+        document.addEventListener('click', (e) => {
+            if (!menuToggle.contains(e.target) && !navCenter.contains(e.target)) {
+                navCenter.classList.remove('open');
+                menuToggle.setAttribute('aria-expanded', 'false');
+            }
+        });
+        mobileMenuDocumentListenersBound = true;
+    }
+
+    menuToggle.dataset.bound = 'true';
 }
 
 // Función para el menú de usuario (dropdown)
@@ -178,8 +192,12 @@ function isMobile() {
 function handleResize() {
     // Lógica adicional si es necesaria para cambios de tamaño
     const navCenter = document.querySelector('.nav-center');
+    const menuToggle = document.getElementById('menu-toggle');
     if (navCenter && navCenter.classList.contains('open') && !isMobile()) {
         navCenter.classList.remove('open');
+        if (menuToggle) {
+            menuToggle.setAttribute('aria-expanded', 'false');
+        }
     }
 }
 

@@ -1,20 +1,14 @@
 -- Base de datos para NEXO - Plataforma de Historias Interactivas
 -- Escuela Secundaria Técnica N°1 de Vicente López
-
--- Crear base de datos
-CREATE DATABASE IF NOT EXISTS nexo_escuela;
-USE nexo_escuela;
-
 -- Tabla de usuarios
 CREATE TABLE usuarios (
     id_usuario INT PRIMARY KEY AUTO_INCREMENT,
     nombre VARCHAR(100) NOT NULL,
     apellido VARCHAR(100) NOT NULL,
+    username VARCHAR(50) UNIQUE NOT NULL,
     email VARCHAR(150) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
     tipo_usuario ENUM('estudiante', 'profesor', 'admin') NOT NULL DEFAULT 'estudiante',
-    curso VARCHAR(50), -- Solo para estudiantes
-    division VARCHAR(10), -- Solo para estudiantes
     fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     activo BOOLEAN DEFAULT TRUE
 );
@@ -135,11 +129,11 @@ CREATE INDEX idx_respuesta_pregunta ON respuestas_formulario(id_pregunta);
 CREATE INDEX idx_respuesta_usuario ON respuestas_formulario(id_usuario);
 
 -- Datos de ejemplo para testing
-INSERT INTO usuarios (nombre, apellido, email, password_hash, tipo_usuario, curso, division) VALUES
-('Juan', 'Pérez', 'juan.perez@est1vl.edu.ar', '$2y$10$example.hash.here', 'estudiante', '6to', 'A'),
-('María', 'González', 'maria.gonzalez@est1vl.edu.ar', '$2y$10$example.hash.here', 'profesor', NULL, NULL),
-('Admin', 'Sistema', 'admin@est1vl.edu.ar', '$2y$10$example.hash.here', 'admin', NULL, NULL);
+INSERT INTO usuarios (nombre, apellido, username, email, password_hash, tipo_usuario) VALUES
+('Juan', 'Pérez', 'juanperez', 'juan.perez@est1vl.edu.ar', '$2y$10$example.hash.here', 'estudiante'),
+('María', 'González', 'mariagonzalez', 'maria.gonzalez@est1vl.edu.ar', '$2y$10$example.hash.here', 'profesor'),
+('Admin', 'Sistema', 'admin', 'admin@est1vl.edu.ar', '$2y$10$example.hash.here', 'admin');
 
-INSERT INTO historias (titulo, descripcion, id_autor, estado, visible) VALUES
-('La Elección del Programador', 'Una historia interactiva sobre decisiones en el mundo de la programación', 1, 'publicada', TRUE),
-('El Misterio del Código Perdido', 'Aventura detectivesca en el mundo del desarrollo de software', 1, 'publicada', TRUE);
+INSERT INTO historias (titulo, descripcion, id_autor, estado, portada, archivo_twine) VALUES
+('La Elección del Programador', 'Una historia interactiva sobre decisiones en el mundo de la programación', 1, 'publicada', '/historias/1/portada.jpg', '/historias/1/index.html'),
+('El Misterio del Código Perdido', 'Aventura detectivesca en el mundo del desarrollo de software', 1, 'publicada', '/historias/2/portada.jpg', '/historias/2/index.html');

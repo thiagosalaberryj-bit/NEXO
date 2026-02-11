@@ -12,10 +12,11 @@ function isLoggedIn() {
     return isset($_SESSION['user_id']) && !empty($_SESSION['user_id']);
 }
 
-function loginUser($userId, $userName, $userEmail) {
+function loginUser($userId, $userName, $userEmail, $userUsername = '') {
     $_SESSION['user_id'] = $userId;
     $_SESSION['user_name'] = $userName;
     $_SESSION['user_email'] = $userEmail;
+    $_SESSION['user_username'] = $userUsername;
     $_SESSION['login_time'] = time();
 }
 
@@ -29,4 +30,8 @@ function logoutUser() {
 
 function getCurrentUserName() {
     return isset($_SESSION['user_name']) ? $_SESSION['user_name'] : 'Usuario';
+}
+
+function getCurrentUserUsername() {
+    return isset($_SESSION['user_username']) ? $_SESSION['user_username'] : '';
 }

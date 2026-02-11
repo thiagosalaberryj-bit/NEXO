@@ -25,23 +25,22 @@ if ($action === 'login') {
 }
 
 function handleLogin() {
-    $email = isset($_POST['email']) ? trim($_POST['email']) : '';
+    $identifier = isset($_POST['identifier']) ? trim($_POST['identifier']) : '';
     $password = isset($_POST['password']) ? $_POST['password'] : '';
 
-    if ($email === '' || $password === '') {
-        echo json_encode(['success' => false, 'message' => 'Email y contraseña son requeridos']);
-        return;
-    }
-
-    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-        echo json_encode(['success' => false, 'message' => 'Email inválido']);
+    if ($identifier === '' || $password === '') {
+        echo json_encode(['success' => false, 'message' => 'Usuario/email y contraseña son requeridos']);
         return;
     }
 
     $conn = conectarDB();
 
-    $stmt = $conn->prepare('SELECT id_usuario, nombre, email, password_hash FROM usuarios WHERE email = ? LIMIT 1');
-    $stmt->bind_param('s', $email);
+    // Determinar si es email o username
+    $isEmail = filter_var($identifier, FILTER_VALIDATE_EMAIL);
+    $field = $isEmail ? 'email' : 'username';
+
+    $stmt = $conn->prepare("SELECT id_usuario, nombre, apellido, username, email, password_hash FROM usuarios WHERE $field = ? AND activo = TRUE LIMIT 1");
+    $stmt->bind_param('s', $identifier);
     $stmt->execute();
     $result = $stmt->get_result();
 
@@ -61,7 +60,7 @@ function handleLogin() {
         return;
     }
 
-    loginUser($user['id_usuario'], $user['nombre'], $user['email']);
+    loginUser($user['id_usuario'], $user['nombre'] . ' ' . $user['apellido'], $user['email'], $user['username']);
 
     $stmt->close();
     cerrarConexion($conn);
@@ -70,17 +69,29 @@ function handleLogin() {
 }
 
 function handleRegister() {
-    $name = isset($_POST['name']) ? trim($_POST['name']) : '';
+    $firstName = isset($_POST['firstName']) ? trim($_POST['firstName']) : '';
+    $lastName = isset($_POST['lastName']) ? trim($_POST['lastName']) : '';
+    $username = isset($_POST['username']) ? trim($_POST['username']) : '';
     $email = isset($_POST['email']) ? trim($_POST['email']) : '';
     $password = isset($_POST['password']) ? $_POST['password'] : '';
 
-    if ($name === '' || $email === '' || $password === '') {
+    if ($firstName === '' || $lastName === '' || $username === '' || $email === '' || $password === '') {
         echo json_encode(['success' => false, 'message' => 'Todos los campos son requeridos']);
         return;
     }
 
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         echo json_encode(['success' => false, 'message' => 'Email inválido']);
+        return;
+    }
+
+    if (strlen($username) < 3) {
+        echo json_encode(['success' => false, 'message' => 'El username debe tener al menos 3 caracteres']);
+        return;
+    }
+
+    if (!preg_match('/^[a-zA-Z0-9_]+$/', $username)) {
+        echo json_encode(['success' => false, 'message' => 'El username solo puede contener letras, números y guiones bajos']);
         return;
     }
 
@@ -91,6 +102,7 @@ function handleRegister() {
 
     $conn = conectarDB();
 
+    // Verificar email único
     $stmt = $conn->prepare('SELECT id_usuario FROM usuarios WHERE email = ? LIMIT 1');
     $stmt->bind_param('s', $email);
     $stmt->execute();
@@ -105,15 +117,25 @@ function handleRegister() {
 
     $stmt->close();
 
+    // Verificar username único
+    $stmt = $conn->prepare('SELECT id_usuario FROM usuarios WHERE username = ? LIMIT 1');
+    $stmt->bind_param('s', $username);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        echo json_encode(['success' => false, 'message' => 'El username ya está en uso']);
+        $stmt->close();
+        cerrarConexion($conn);
+        return;
+    }
+
+    $stmt->close();
+
     $hash = password_hash($password, PASSWORD_DEFAULT);
 
-    // Separar nombre y apellido (asumiendo que viene como "Nombre Apellido")
-    $nameParts = explode(' ', $name, 2);
-    $firstName = $nameParts[0];
-    $lastName = isset($nameParts[1]) ? $nameParts[1] : '';
-
-    $stmt = $conn->prepare('INSERT INTO usuarios (nombre, apellido, email, password_hash) VALUES (?, ?, ?, ?)');
-    $stmt->bind_param('ssss', $firstName, $lastName, $email, $hash);
+    $stmt = $conn->prepare('INSERT INTO usuarios (nombre, apellido, username, email, password_hash) VALUES (?, ?, ?, ?, ?)');
+    $stmt->bind_param('sssss', $firstName, $lastName, $username, $email, $hash);
 
     if ($stmt->execute()) {
         echo json_encode(['success' => true, 'message' => 'Registro exitoso, ahora puedes iniciar sesión']);
