@@ -53,14 +53,8 @@ function setupScrollIndicator() {
                 block: 'start'
             });
         });
-
-        // La flecha siempre permanece visible
-        // No hay lógica de ocultar/mostrar contenido
     }
 }
-
-// Función para mostrar las secciones de contenido (eliminada - ahora siempre visible)
-// function showContentSections() { ... }
 
 // Animar contadores de estadísticas
 function animateCounters() {

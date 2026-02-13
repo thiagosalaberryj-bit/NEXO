@@ -258,6 +258,7 @@ require_once __DIR__ . '/../backend/session/session_manager.php';
     <!-- Scripts -->
     <script src="../js/theme.js"></script>
     <script src="../js/navbar.js"></script>
+    <script src="../js/api.js"></script>
     <script src="../js/notifications.js"></script>
     <script src="../js/modals.js"></script>
     <script src="../js/subir-historia.js"></script>

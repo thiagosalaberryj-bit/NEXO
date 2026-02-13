@@ -137,7 +137,7 @@ function handleLoginSubmit(event) {
     var formData = new FormData(form);
     formData.append('action', 'login');
 
-    fetch('/PROYECTO_NEXO/backend/session/auth.php', {
+    apiFetch('/backend/session/auth.php', {
         method: 'POST',
         body: formData
     }).then(function(response) {
@@ -174,7 +174,7 @@ function handleRegisterSubmit(event) {
     var formData = new FormData(form);
     formData.append('action', 'register');
 
-    fetch('/PROYECTO_NEXO/backend/session/auth.php', {
+    apiFetch('/backend/session/auth.php', {
         method: 'POST',
         body: formData
     }).then(function(response) {
@@ -196,7 +196,7 @@ function handleRegisterSubmit(event) {
 function handleAjaxLogout(event) {
     event.preventDefault();
 
-    fetch('/PROYECTO_NEXO/backend/session/logout.php', {
+    apiFetch('/backend/session/logout.php', {
         method: 'POST',
         headers: {
             'X-Requested-With': 'XMLHttpRequest'
@@ -206,7 +206,7 @@ function handleAjaxLogout(event) {
     }).then(function(data) {
         if (data.success) {
             // Redirigir a explorar con bandera de logout para que el servidor renderice el navbar de invitado
-            window.location.href = '/PROYECTO_NEXO/frontend/explorar.php?logout=success';
+            window.location.href = getBaseUrl() + '/frontend/explorar.php?logout=success';
         } else {
             showNotification('error', data.message || 'Error al cerrar sesión');
         }
