@@ -1056,3 +1056,30 @@
     border-radius: 8px;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
 }
+
+/* ─── Alertas ────────────────────────────────────────── */
+.sh-alert {
+    padding: 16px;
+    border-radius: 8px;
+    margin-top: 24px;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.sh-alert i {
+    font-size: 1.2rem;
+    margin-top: 2px;
+}
+
+.sh-alert-info {
+    background-color: rgba(138, 43, 226, 0.1); /* Morado claro */
+    border: 1px solid rgba(138, 43, 226, 0.3); /* Morado */
+    color: #8a2be2; /* Morado */
+}
+
+.sh-alert-info i {
+    color: #8a2be2;
+}

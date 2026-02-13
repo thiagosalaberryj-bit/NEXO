@@ -233,6 +233,11 @@ require_once __DIR__ . '/../backend/session/session_manager.php';
                             </button>
                         </div>
                     </div>
+
+                    <div id="collab-publish-message" class="sh-alert sh-alert-info sh-hidden">
+                        <i class="fas fa-info-circle"></i>
+                        <strong>Colaboradores invitados:</strong> No puedes publicar la historia hasta que todos los colaboradores acepten la invitación. Guarda como borrador y verifica el estado desde tu perfil.
+                    </div>
                 </div>
 
             </form>

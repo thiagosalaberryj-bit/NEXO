@@ -117,6 +117,26 @@ CREATE TABLE contenido_historia (
     fecha_subida TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (id_historia) REFERENCES historias(id_historia) ON DELETE CASCADE
 );
+
+-- Tabla de géneros (opcional para normalizar, pero por ahora usamos columna en historias)
+-- Si quieres géneros fijos, podemos poblarla con datos como 'aventura', 'misterio', etc.
+
+-- Agregar columna de género a la tabla historias
+ALTER TABLE historias ADD COLUMN genero VARCHAR(50);
+
+-- Tabla de invitaciones de colaboradores
+CREATE TABLE invitaciones_colaboradores (
+    id_invitacion INT PRIMARY KEY AUTO_INCREMENT,
+    id_historia INT NOT NULL,
+    id_invitador INT NOT NULL, -- Usuario que envía la invitación
+    id_invitado INT NOT NULL, -- Usuario invitado
+    estado ENUM('pendiente', 'aceptada', 'rechazada') DEFAULT 'pendiente',
+    fecha_invitacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY unique_invitacion (id_historia, id_invitado), -- Evita invitaciones duplicadas
+    FOREIGN KEY (id_historia) REFERENCES historias(id_historia) ON DELETE CASCADE,
+    FOREIGN KEY (id_invitador) REFERENCES usuarios(id_usuario) ON DELETE CASCADE,
+    FOREIGN KEY (id_invitado) REFERENCES usuarios(id_usuario) ON DELETE CASCADE
+);
 CREATE INDEX idx_visualizacion_historia ON visualizaciones(id_historia);
 CREATE INDEX idx_visualizacion_usuario ON visualizaciones(id_usuario);
 CREATE INDEX idx_like_historia ON likes(id_historia);
@@ -128,12 +148,7 @@ CREATE INDEX idx_pregunta_formulario ON preguntas_formulario(id_formulario);
 CREATE INDEX idx_respuesta_pregunta ON respuestas_formulario(id_pregunta);
 CREATE INDEX idx_respuesta_usuario ON respuestas_formulario(id_usuario);
 
--- Datos de ejemplo para testing
-INSERT INTO usuarios (nombre, apellido, username, email, password_hash, tipo_usuario) VALUES
-('Juan', 'Pérez', 'juanperez', 'juan.perez@est1vl.edu.ar', '$2y$10$example.hash.here', 'estudiante'),
-('María', 'González', 'mariagonzalez', 'maria.gonzalez@est1vl.edu.ar', '$2y$10$example.hash.here', 'profesor'),
-('Admin', 'Sistema', 'admin', 'admin@est1vl.edu.ar', '$2y$10$example.hash.here', 'admin');
-
-INSERT INTO historias (titulo, descripcion, id_autor, estado, portada, archivo_twine) VALUES
-('La Elección del Programador', 'Una historia interactiva sobre decisiones en el mundo de la programación', 1, 'publicada', '/historias/1/portada.jpg', '/historias/1/index.html'),
-('El Misterio del Código Perdido', 'Aventura detectivesca en el mundo del desarrollo de software', 1, 'publicada', '/historias/2/portada.jpg', '/historias/2/index.html');
+-- Índices para invitaciones de colaboradores
+CREATE INDEX idx_invitacion_historia ON invitaciones_colaboradores(id_historia);
+CREATE INDEX idx_invitacion_invitador ON invitaciones_colaboradores(id_invitador);
+CREATE INDEX idx_invitacion_invitado ON invitaciones_colaboradores(id_invitado);

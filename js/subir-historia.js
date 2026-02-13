@@ -44,6 +44,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
         if (current === TOTAL) {
             btnNext.style.display = 'none';
+            // Paso 5: Verificar colaboradores
+            const btnPublish = document.getElementById('btn-publish');
+            const collabMessage = document.getElementById('collab-publish-message');
+            if (collaborators.length > 0) {
+                btnPublish.disabled = true;
+                btnPublish.textContent = 'Publicar (Bloqueado)';
+                if (collabMessage) {
+                    collabMessage.classList.remove('sh-hidden');
+                }
+            } else {
+                btnPublish.disabled = false;
+                btnPublish.textContent = 'Publicar historia';
+                if (collabMessage) {
+                    collabMessage.classList.add('sh-hidden');
+                }
+            }
         } else {
             btnNext.style.display = '';
         }
@@ -367,57 +383,53 @@ document.addEventListener('DOMContentLoaded', () => {
     const collabCount   = document.getElementById('collab-count');
     let collaborators   = [];
 
-    // Datos simulados de usuarios
-    const mockUsers = [
-        { name: 'María García', user: '@maria_garcia' },
-        { name: 'Carlos López', user: '@carlos_lopez' },
-        { name: 'Ana Rodríguez', user: '@ana_rod' },
-        { name: 'Juan Martínez', user: '@juanm' },
-        { name: 'Lucía Fernández', user: '@lucia_f' },
-        { name: 'Pedro Sánchez', user: '@pedro_s' },
-        { name: 'Valentina Torres', user: '@valen_t' },
-        { name: 'Mateo Díaz', user: '@mateo_d' },
-    ];
-
     collabSearch.addEventListener('input', debounce(() => {
-        const q = collabSearch.value.trim().toLowerCase();
+        const q = collabSearch.value.trim();
         if (q.length < 2) {
             searchResults.classList.add('sh-hidden');
             return;
         }
 
-        const filtered = mockUsers.filter(u => {
-            const added = collaborators.some(c => c.user === u.user);
-            return !added && (u.name.toLowerCase().includes(q) || u.user.toLowerCase().includes(q));
-        });
+        // Buscar usuarios via AJAX
+        apiFetch('/backend/subir_historia/buscar_usuarios.php?q=' + encodeURIComponent(q), {
+            method: 'GET'
+        }).then(response => response.json()).then(data => {
+            if (data.success) {
+                const users = data.users.filter(u => !collaborators.some(c => c.user === u.username)); // Excluir ya agregados
 
-        if (filtered.length === 0) {
-            searchResults.classList.add('sh-hidden');
-            return;
-        }
+                if (users.length === 0) {
+                    searchResults.classList.add('sh-hidden');
+                    return;
+                }
 
-        searchResults.innerHTML = filtered.map(u => `
-            <div class="sh-search-result" data-user='${JSON.stringify(u)}'>
-                <div class="sh-result-avatar">${u.name.charAt(0)}</div>
-                <div class="sh-result-info">
-                    <div class="sh-result-name">${u.name}</div>
-                    <div class="sh-result-user">${u.user}</div>
-                </div>
-                <button type="button" class="sh-result-add"><i class="fas fa-plus"></i> Agregar</button>
-            </div>
-        `).join('');
+                searchResults.innerHTML = users.map(u => `
+                    <div class="sh-search-result" data-user='${JSON.stringify({ name: u.name, user: u.username })}'>
+                        <div class="sh-result-avatar">${u.name.charAt(0)}</div>
+                        <div class="sh-result-info">
+                            <div class="sh-result-name">${u.name}</div>
+                            <div class="sh-result-user">@${u.username}</div>
+                        </div>
+                        <button type="button" class="sh-result-add"><i class="fas fa-plus"></i> Agregar</button>
+                    </div>
+                `).join('');
 
-        searchResults.classList.remove('sh-hidden');
+                searchResults.classList.remove('sh-hidden');
 
-        // Add handlers
-        searchResults.querySelectorAll('.sh-search-result').forEach(el => {
-            el.addEventListener('click', () => {
-                const userData = JSON.parse(el.dataset.user);
-                collaborators.push(userData);
-                renderCollaborators();
-                collabSearch.value = '';
+                // Add handlers
+                searchResults.querySelectorAll('.sh-search-result').forEach(el => {
+                    el.addEventListener('click', () => {
+                        const userData = JSON.parse(el.dataset.user);
+                        collaborators.push(userData);
+                        renderCollaborators();
+                        collabSearch.value = '';
+                        searchResults.classList.add('sh-hidden');
+                    });
+                });
+            } else {
                 searchResults.classList.add('sh-hidden');
-            });
+            }
+        }).catch(() => {
+            searchResults.classList.add('sh-hidden');
         });
     }, 250));
 
@@ -476,16 +488,87 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // ───────────── Paso 5: Publicar / Borrador ─────────
     document.getElementById('btn-publish').addEventListener('click', () => {
-        if (typeof showNotification === 'function') {
-            showNotification('success', '¡Historia publicada! (demo - sin backend)');
-        }
+        submitHistoria('publicada');
     });
 
     document.getElementById('btn-draft').addEventListener('click', () => {
-        if (typeof showNotification === 'function') {
-            showNotification('info', 'Borrador guardado (demo - sin backend)');
-        }
+        submitHistoria('borrador');
     });
+
+    function submitHistoria(estado) {
+        // Verificar colaboradores para publicar
+        if (estado === 'publicada' && collaborators.length > 0) {
+            showNotification('error', 'No puedes publicar la historia hasta que todos los colaboradores acepten la invitación. Guarda como borrador.');
+            return;
+        }
+
+        // Validar que todos los pasos estén completos
+        if (!validateStep1() || !validateStep2()) {
+            showNotification('error', 'Completa todos los campos requeridos antes de continuar.');
+            return;
+        }
+
+        // Recopilar datos
+        const formData = new FormData();
+        formData.append('action', 'subir_historia');
+        formData.append('titulo', titleInput.value.trim());
+        formData.append('descripcion', descInput.value.trim());
+        let genre = genreSelect.value;
+        if (genre === 'otro') {
+            genre = document.getElementById('custom-genre').value.trim();
+        }
+        formData.append('genero', genre);
+        formData.append('estado', estado);
+
+        // Carpeta contenido (opcional)
+        const carpetaInput = document.getElementById('story-folder');
+        if (carpetaInput && carpetaInput.value.trim()) {
+            formData.append('carpeta_contenido', carpetaInput.value.trim());
+        }
+
+        // Archivos
+        if (htmlInput.files[0]) {
+            formData.append('archivo_html', htmlInput.files[0]);
+        }
+        if (coverInput.files[0]) {
+            formData.append('portada', coverInput.files[0]);
+        }
+
+        // Recursos
+        resourceFiles.forEach(item => {
+            formData.append('recursos[]', item.file);
+        });
+
+        // Colaboradores
+        const colaboradoresUsernames = collaborators.map(c => c.user);
+        formData.append('colaboradores', JSON.stringify(colaboradoresUsernames));
+
+        // Enviar via AJAX
+        apiFetch('/backend/subir_historia/subir.php', {
+            method: 'POST',
+            body: formData
+        }).then(response => {
+            console.log('Response status:', response.status);
+            if (!response.ok) {
+                throw new Error('HTTP ' + response.status);
+            }
+            return response.json();
+        }).then(data => {
+            console.log('Response data:', data);
+            if (data.success) {
+                showNotification('success', data.message);
+                // Redirigir a explorar o perfil después de un delay
+                setTimeout(() => {
+                    window.location.href = getBaseUrl() + '/frontend/explorar.php';
+                }, 2000);
+            } else {
+                showNotification('error', data.message);
+            }
+        }).catch(error => {
+            console.error('Fetch error:', error);
+            showNotification('error', 'Error al subir la historia: ' + error.message);
+        });
+    }
 
     // ───────────── Utilidades ──────────────────────────
     function setupDropzone(zone, input) {
