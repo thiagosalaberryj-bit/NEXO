@@ -129,16 +129,13 @@ require_once __DIR__ . '/../backend/session/session_manager.php';
                             <input type="file" id="story-cover" name="cover" accept="image/*" hidden>
                             <button type="button" class="sh-btn-outline" onclick="document.getElementById('story-cover').click()">Seleccionar imagen</button>
                         </div>
-                        <div class="sh-cover-preview sh-hidden" id="cover-preview-box">
-                            <img id="cover-preview-img" src="" alt="Preview">
-                            <button type="button" class="sh-remove-file" id="remove-cover"><i class="fas fa-times"></i></button>
-                        </div>
+                        <ul class="sh-file-list" id="cover-list"></ul>
                     </div>
 
                     <div class="sh-field">
                         <label>Recursos adicionales <span class="sh-optional">(opcional)</span></label>
                         <div class="sh-inline-field">
-                            <input type="text" id="folder-name" name="folder_name" placeholder="Nombre de la carpeta de recursos">
+                            <input type="text" id="folder-name" name="folder_name" placeholder="Nombre de la carpeta de recursos (opcional)">
                         </div>
                         <div class="sh-dropzone sh-dropzone-small" id="drop-resources">
                             <i class="fas fa-folder-plus"></i>
@@ -147,6 +144,14 @@ require_once __DIR__ . '/../backend/session/session_manager.php';
                             <button type="button" class="sh-btn-outline" onclick="document.getElementById('story-resources').click()">Seleccionar archivos</button>
                         </div>
                         <ul class="sh-file-list" id="resources-list"></ul>
+                    </div>
+
+                    <div class="sh-alert sh-alert-info">
+                        <div class="sh-alert-header">
+                            <i class="fas fa-info-circle"></i>
+                            <strong>Nota sobre carpetas</strong>
+                        </div>
+                        <p>Luego al editar la historia en tu perfil podrás crear múltiples carpetas para organizar tus historias. Si subes contenido aquí pero no le pones nombre a tu carpeta, se pondrá automáticamente como "contenido" (es recomendable ponerle un nombre para evitar problemas de enrutamiento).</p>
                     </div>
                 </div>
 
@@ -235,8 +240,11 @@ require_once __DIR__ . '/../backend/session/session_manager.php';
                     </div>
 
                     <div id="collab-publish-message" class="sh-alert sh-alert-info sh-hidden">
-                        <i class="fas fa-info-circle"></i>
-                        <strong>Colaboradores invitados:</strong> No puedes publicar la historia hasta que todos los colaboradores acepten la invitación. Guarda como borrador y verifica el estado desde tu perfil.
+                        <div class="sh-alert-header">
+                            <i class="fas fa-info-circle"></i>
+                            <strong>Colaboradores invitados</strong>
+                        </div>
+                        <p>No puedes publicar la historia hasta que todos los colaboradores acepten la invitación. Guarda como borrador y verifica el estado desde tu perfil.</p>
                     </div>
                 </div>
 

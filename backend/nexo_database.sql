@@ -21,11 +21,21 @@ CREATE TABLE historias (
     id_autor INT NOT NULL,
     portada VARCHAR(255) NOT NULL, -- Ruta a la imagen de portada (en raíz de carpeta)
     archivo_twine VARCHAR(255) NOT NULL, -- Ruta al archivo HTML de Twine (en raíz de carpeta)
-    carpeta_contenido VARCHAR(255), -- Carpeta opcional para assets multimedia (/contenidos/)
     fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     fecha_modificacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     estado ENUM('borrador', 'publicada') DEFAULT 'borrador',
+    genero VARCHAR(50),
     FOREIGN KEY (id_autor) REFERENCES usuarios(id_usuario) ON DELETE CASCADE
+);
+
+-- Tabla de carpetas de historia
+CREATE TABLE carpetas_historia (
+    id_carpeta INT PRIMARY KEY AUTO_INCREMENT,
+    id_historia INT NOT NULL,
+    nombre_carpeta VARCHAR(100) NOT NULL,
+    descripcion TEXT,
+    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_historia) REFERENCES historias(id_historia) ON DELETE CASCADE
 );
 
 -- Tabla de visualizaciones
@@ -109,20 +119,16 @@ CREATE TABLE respuestas_formulario (
 CREATE TABLE contenido_historia (
     id_contenido INT PRIMARY KEY AUTO_INCREMENT,
     id_historia INT NOT NULL,
+    id_carpeta INT DEFAULT NULL,
     nombre_archivo VARCHAR(255) NOT NULL,
     ruta_archivo VARCHAR(500) NOT NULL,
     tipo_archivo ENUM('imagen', 'audio', 'video', 'documento', 'otro') DEFAULT 'otro',
     extension VARCHAR(10),
     tamano_bytes INT,
     fecha_subida TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (id_historia) REFERENCES historias(id_historia) ON DELETE CASCADE
+    FOREIGN KEY (id_historia) REFERENCES historias(id_historia) ON DELETE CASCADE,
+    FOREIGN KEY (id_carpeta) REFERENCES carpetas_historia(id_carpeta) ON DELETE SET NULL
 );
-
--- Tabla de géneros (opcional para normalizar, pero por ahora usamos columna en historias)
--- Si quieres géneros fijos, podemos poblarla con datos como 'aventura', 'misterio', etc.
-
--- Agregar columna de género a la tabla historias
-ALTER TABLE historias ADD COLUMN genero VARCHAR(50);
 
 -- Tabla de invitaciones de colaboradores
 CREATE TABLE invitaciones_colaboradores (
@@ -152,3 +158,10 @@ CREATE INDEX idx_respuesta_usuario ON respuestas_formulario(id_usuario);
 CREATE INDEX idx_invitacion_historia ON invitaciones_colaboradores(id_historia);
 CREATE INDEX idx_invitacion_invitador ON invitaciones_colaboradores(id_invitador);
 CREATE INDEX idx_invitacion_invitado ON invitaciones_colaboradores(id_invitado);
+
+-- Índices para carpetas_historia
+CREATE INDEX idx_carpeta_historia ON carpetas_historia(id_historia);
+
+-- Índices para contenido_historia
+CREATE INDEX idx_contenido_historia ON contenido_historia(id_historia);
+CREATE INDEX idx_contenido_carpeta ON contenido_historia(id_carpeta);

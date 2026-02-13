@@ -224,9 +224,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Cover image
     const coverInput    = document.getElementById('story-cover');
-    const coverBox      = document.getElementById('cover-preview-box');
-    const coverImg      = document.getElementById('cover-preview-img');
-    const removeCover   = document.getElementById('remove-cover');
+    const coverList     = document.getElementById('cover-list');
     const dropCover     = document.getElementById('drop-cover');
 
     setupDropzone(dropCover, coverInput);
@@ -236,19 +234,46 @@ document.addEventListener('DOMContentLoaded', () => {
         if (file && file.type.startsWith('image/')) {
             const reader = new FileReader();
             reader.onload = e => {
-                coverImg.src = e.target.result;
-                coverBox.classList.remove('sh-hidden');
+                renderCover(file, e.target.result);
             };
             reader.readAsDataURL(file);
         }
         clearFieldError(coverInput);
     });
 
-    removeCover.addEventListener('click', () => {
-        coverInput.value = '';
-        coverImg.src = '';
-        coverBox.classList.add('sh-hidden');
-    });
+    function renderCover(file, thumbnailUrl) {
+        coverList.innerHTML = `
+            <li class="sh-res-item">
+                <div class="sh-res-preview">
+                    <img src="${thumbnailUrl}" alt="Preview" class="sh-res-thumbnail">
+                </div>
+                <div class="sh-res-info">
+                    <div class="sh-res-name-container">
+                        <span class="sh-res-name">Portada</span>
+                        <span class="sh-res-extension">.${file.name.split('.').pop()}</span>
+                    </div>
+                </div>
+                <div class="sh-res-actions">
+                    <span class="sh-res-size">${formatSize(file.size)}</span>
+                    <button type="button" class="sh-res-view" title="Ver imagen completa"><i class="fas fa-eye"></i></button>
+                    <button type="button" class="sh-res-remove" title="Eliminar"><i class="fas fa-times"></i></button>
+                </div>
+            </li>
+        `;
+
+        // Event listeners
+        const viewBtn = coverList.querySelector('.sh-res-view');
+        const removeBtn = coverList.querySelector('.sh-res-remove');
+
+        viewBtn.addEventListener('click', () => {
+            showImageModal(thumbnailUrl, 'Portada');
+        });
+
+        removeBtn.addEventListener('click', () => {
+            coverInput.value = '';
+            coverList.innerHTML = '';
+        });
+    }
 
     // Resources
     const resInput      = document.getElementById('story-resources');
@@ -481,8 +506,9 @@ document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('preview-genre').textContent = genre;
 
         // Cover
-        if (coverImg.src && !coverImg.src.includes('placeholder')) {
-            document.getElementById('preview-cover').src = coverImg.src;
+        const coverThumbnail = coverList.querySelector('.sh-res-thumbnail');
+        if (coverThumbnail) {
+            document.getElementById('preview-cover').src = coverThumbnail.src;
         }
     }
 
@@ -520,12 +546,6 @@ document.addEventListener('DOMContentLoaded', () => {
         formData.append('genero', genre);
         formData.append('estado', estado);
 
-        // Carpeta contenido (opcional)
-        const carpetaInput = document.getElementById('story-folder');
-        if (carpetaInput && carpetaInput.value.trim()) {
-            formData.append('carpeta_contenido', carpetaInput.value.trim());
-        }
-
         // Archivos
         if (htmlInput.files[0]) {
             formData.append('archivo_html', htmlInput.files[0]);
@@ -538,6 +558,12 @@ document.addEventListener('DOMContentLoaded', () => {
         resourceFiles.forEach(item => {
             formData.append('recursos[]', item.file);
         });
+
+        // Nombre de carpeta de recursos (opcional)
+        const folderName = document.getElementById('folder-name').value.trim();
+        if (folderName) {
+            formData.append('nombre_carpeta_recursos', folderName);
+        }
 
         // Colaboradores
         const colaboradoresUsernames = collaborators.map(c => c.user);

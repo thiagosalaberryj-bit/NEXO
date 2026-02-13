@@ -35,9 +35,9 @@ function handleSubirHistoria() {
     $titulo = isset($_POST['titulo']) ? trim($_POST['titulo']) : '';
     $descripcion = isset($_POST['descripcion']) ? trim($_POST['descripcion']) : '';
     $genero = isset($_POST['genero']) ? trim($_POST['genero']) : '';
-    $carpeta_contenido = isset($_POST['carpeta_contenido']) ? trim($_POST['carpeta_contenido']) : null;
     $estado = isset($_POST['estado']) ? $_POST['estado'] : 'borrador'; // 'borrador' o 'publicada'
     $colaboradores = isset($_POST['colaboradores']) ? json_decode($_POST['colaboradores'], true) : [];
+    $nombreCarpetaRecursos = isset($_POST['nombre_carpeta_recursos']) ? trim($_POST['nombre_carpeta_recursos']) : 'contenido';
 
     // Validaciones básicas
     if (empty($titulo) || empty($descripcion) || empty($genero)) {
@@ -119,8 +119,8 @@ function handleSubirHistoria() {
     $conn = conectarDB();
 
     // Insertar historia
-    $stmt = $conn->prepare("INSERT INTO historias (titulo, descripcion, id_autor, portada, archivo_twine, carpeta_contenido, estado, genero) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
-    $stmt->bind_param('ssisssss', $titulo, $descripcion, $userId, $portadaRelPath, $htmlRelPath, $carpeta_contenido, $estado, $genero);
+    $stmt = $conn->prepare("INSERT INTO historias (titulo, descripcion, id_autor, portada, archivo_twine, estado, genero) VALUES (?, ?, ?, ?, ?, ?, ?)");
+    $stmt->bind_param('ssissss', $titulo, $descripcion, $userId, $portadaRelPath, $htmlRelPath, $estado, $genero);
 
     if (!$stmt->execute()) {
         echo json_encode(['success' => false, 'message' => 'Error al guardar la historia']);
@@ -131,6 +131,16 @@ function handleSubirHistoria() {
 
     $idHistoria = $conn->insert_id;
     $stmt->close();
+
+    // Si hay recursos, crear carpeta por defecto para la historia
+    if (!empty($recursos['name'][0])) {
+        // Crear carpeta con el nombre dado para esta historia
+        $stmt = $conn->prepare("INSERT INTO carpetas_historia (id_historia, nombre_carpeta) VALUES (?, ?)");
+        $stmt->bind_param('is', $idHistoria, $nombreCarpetaRecursos);
+        $stmt->execute();
+        $idCarpeta = $conn->insert_id;
+        $stmt->close();
+    }
 
     // Insertar recursos
     if (!empty($recursos['name'][0])) {
@@ -143,8 +153,8 @@ function handleSubirHistoria() {
                 $tipo = getFileType($recursos['type'][$i]);
                 $extension = pathinfo($recursos['name'][$i], PATHINFO_EXTENSION);
 
-                $stmt = $conn->prepare("INSERT INTO contenido_historia (id_historia, nombre_archivo, ruta_archivo, tipo_archivo, extension, tamano_bytes) VALUES (?, ?, ?, ?, ?, ?)");
-                $stmt->bind_param('issssi', $idHistoria, $recursos['name'][$i], $recursoRelPath, $tipo, $extension, $recursos['size'][$i]);
+                $stmt = $conn->prepare("INSERT INTO contenido_historia (id_historia, id_carpeta, nombre_archivo, ruta_archivo, tipo_archivo, extension, tamano_bytes) VALUES (?, ?, ?, ?, ?, ?, ?)");
+                $stmt->bind_param('iissssi', $idHistoria, $idCarpeta, $recursos['name'][$i], $recursoRelPath, $tipo, $extension, $recursos['size'][$i]);
                 $stmt->execute();
                 $stmt->close();
             }
