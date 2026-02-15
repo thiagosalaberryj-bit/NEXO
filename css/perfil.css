@@ -720,3 +720,88 @@
         gap: 12px;
     }
 }
+
+/* ─── Nuevos estilos para secciones con títulos y descripciones ─── */
+
+/* Secciones principales */
+.pf-section {
+    display: none;
+}
+
+.pf-section.active {
+    display: block;
+}
+
+.pf-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    gap: 20px;
+}
+
+.pf-section-title-desc h1 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin: 0 0 8px 0;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.pf-section-title-desc h1 i {
+    color: var(--primary-color);
+    font-size: 1.5rem;
+}
+
+.pf-section-title-desc p {
+    color: #64748b;
+    font-size: 1rem;
+    margin: 0;
+    line-height: 1.5;
+}
+
+.pf-section-actions {
+    display: flex;
+    gap: 12px;
+    flex-shrink: 0;
+}
+
+/* Grid para acciones en configuración */
+.pf-settings-actions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 12px;
+    margin-top: 16px;
+}
+
+.pf-settings-actions-grid .pf-btn-outline,
+.pf-settings-actions-grid .pf-btn-danger {
+    width: 100%;
+    justify-content: center;
+    padding: 12px 16px;
+}
+
+/* Responsive para secciones */
+@media (max-width: 768px) {
+    .pf-section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+    }
+
+    .pf-section-actions {
+        align-self: flex-start;
+        width: auto;
+    }
+
+    .pf-section-actions .pf-btn-primary {
+        width: auto;
+        justify-content: flex-start;
+    }
+
+    .pf-settings-actions-grid {
+        grid-template-columns: 1fr;
+    }
+}

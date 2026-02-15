@@ -44,7 +44,7 @@ require_once __DIR__ . '/../backend/session/session_manager.php';
                             <i class="fas fa-camera"></i>
                         </button>
                     </div>
-                    <h2 class="pf-user-name" id="user-name"><?php echo htmlspecialchars(getCurrentUserName(), ENT_QUOTES, 'UTF-8'); ?></h2>
+                    <h2 class="pf-user-name" id="user-name">usuario</h2>
                     <p class="pf-user-email" id="user-email">usuario@ejemplo.com</p>
                     <div class="pf-user-stats">
                         <div class="pf-stat">
@@ -67,13 +67,13 @@ require_once __DIR__ . '/../backend/session/session_manager.php';
                         <i class="fas fa-book"></i>
                         <span>Mis Historias</span>
                     </button>
-                    <button class="pf-nav-item" data-section="stats">
-                        <i class="fas fa-chart-bar"></i>
-                        <span>Estadísticas</span>
-                    </button>
                     <button class="pf-nav-item" data-section="forms">
                         <i class="fas fa-clipboard-list"></i>
                         <span>Formularios</span>
+                    </button>
+                    <button class="pf-nav-item" data-section="stats">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Estadísticas</span>
                     </button>
                     <button class="pf-nav-item" data-section="comments">
                         <i class="fas fa-comments"></i>
@@ -91,19 +91,47 @@ require_once __DIR__ . '/../backend/session/session_manager.php';
                 <!-- Mis Historias -->
                 <section class="pf-section active" id="stories-section">
                     <div class="pf-section-header">
-                        <h1><i class="fas fa-book"></i> Mis Historias</h1>
-                        <button class="pf-btn-primary">
-                            <i class="fas fa-plus"></i> Crear Nueva Historia
-                        </button>
+                        <div class="pf-section-title-desc">
+                            <h1><i class="fas fa-book"></i> Mis Historias</h1>
+                            <p>Gestiona y administra todas tus historias interactivas creadas</p>
+                        </div>
+                        <div class="pf-section-actions">
+                            <a href="subir-historia.php" class="pf-btn-primary">
+                                <i class="fas fa-plus"></i> Crear Nueva Historia
+                            </a>
+                        </div>
                     </div>
                     <div class="pf-stories-grid" id="stories-grid">
                         <div class="pf-empty-state">
                             <i class="fas fa-book-open"></i>
                             <h3>Aún no has creado ninguna historia</h3>
                             <p>¡Comparte tus historias con la comunidad!</p>
-                            <button class="pf-btn-primary">
+                            <a href="subir-historia.php" class="pf-btn-primary">
                                 Crear Primera Historia
+                            </a>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Formularios -->
+                <section class="pf-section" id="forms-section">
+                    <div class="pf-section-header">
+                        <div class="pf-section-title-desc">
+                            <h1><i class="fas fa-clipboard-list"></i> Formularios</h1>
+                            <p>Crea y gestiona formularios interactivos para tus historias</p>
+                        </div>
+                        <div class="pf-section-actions">
+                            <button class="pf-btn-primary" id="create-form-btn">
+                                <i class="fas fa-plus"></i> Crear Nuevo Formulario
                             </button>
+                        </div>
+                    </div>
+                    <div class="pf-forms-list" id="forms-list">
+                        <!-- Los formularios se cargarán dinámicamente aquí -->
+                        <div class="pf-empty-state">
+                            <i class="fas fa-clipboard-list"></i>
+                            <h3>Aún no has creado formularios</h3>
+                            <p>Crea formularios para recopilar feedback de tus lectores</p>
                         </div>
                     </div>
                 </section>
@@ -111,8 +139,10 @@ require_once __DIR__ . '/../backend/session/session_manager.php';
                 <!-- Estadísticas -->
                 <section class="pf-section" id="stats-section">
                     <div class="pf-section-header">
-                        <h1><i class="fas fa-chart-bar"></i> Estadísticas de Historias</h1>
-                        <p>Ve los likes y formularios contestados de tus historias</p>
+                        <div class="pf-section-title-desc">
+                            <h1><i class="fas fa-chart-bar"></i> Estadísticas</h1>
+                            <p>Analiza el rendimiento de tus historias con métricas detalladas</p>
+                        </div>
                     </div>
                     <div class="pf-stories-stats" id="stories-stats">
                         <!-- Las historias se cargarán dinámicamente aquí -->
@@ -124,33 +154,13 @@ require_once __DIR__ . '/../backend/session/session_manager.php';
                     </div>
                 </section>
 
-                <!-- Formularios -->
-                <section class="pf-section" id="forms-section">
-                    <div class="pf-section-header">
-                        <h1><i class="fas fa-clipboard-list"></i> Formularios de Historias</h1>
-                        <p>Crea formularios para que los lectores interactúen con tus historias</p>
-                    </div>
-                    <div class="pf-forms-creator">
-                        <div class="pf-form-creator-header">
-                            <button class="pf-btn-primary" id="create-form-btn">
-                                <i class="fas fa-plus"></i> Crear Nuevo Formulario
-                            </button>
-                        </div>
-                        <div class="pf-forms-list" id="forms-list">
-                            <!-- Los formularios se cargarán dinámicamente aquí -->
-                            <div class="pf-empty-state">
-                                <i class="fas fa-clipboard-list"></i>
-                                <h3>Aún no has creado formularios</h3>
-                                <p>Crea formularios para recopilar feedback de tus lectores</p>
-                            </div>
-                        </div>
-                    </div>
-                </section>
-
                 <!-- Comentarios -->
                 <section class="pf-section" id="comments-section">
                     <div class="pf-section-header">
-                        <h1><i class="fas fa-comments"></i> Comentarios</h1>
+                        <div class="pf-section-title-desc">
+                            <h1><i class="fas fa-comments"></i> Comentarios</h1>
+                            <p>Revisa y responde a los comentarios de tus lectores</p>
+                        </div>
                     </div>
                     <div class="pf-comments-list" id="comments-list">
                         <div class="pf-empty-state">
@@ -164,7 +174,10 @@ require_once __DIR__ . '/../backend/session/session_manager.php';
                 <!-- Configuración -->
                 <section class="pf-section" id="settings-section">
                     <div class="pf-section-header">
-                        <h1><i class="fas fa-cog"></i> Configuración</h1>
+                        <div class="pf-section-title-desc">
+                            <h1><i class="fas fa-cog"></i> Configuración</h1>
+                            <p>Personaliza tu experiencia y gestiona tu cuenta</p>
+                        </div>
                     </div>
                     <div class="pf-settings-grid">
                         <div class="pf-setting-group">
@@ -183,21 +196,18 @@ require_once __DIR__ . '/../backend/session/session_manager.php';
 
                         <div class="pf-setting-group">
                             <h3>Cuenta</h3>
-                            <div class="pf-setting-item">
+                            <div class="pf-settings-actions-grid">
                                 <button class="pf-btn-outline" onclick="ProfileUtils.editProfile()">
                                     <i class="fas fa-user-edit"></i> Editar Perfil
                                 </button>
-                            </div>
-                            <div class="pf-setting-item">
                                 <button class="pf-btn-outline" onclick="ProfileUtils.changePassword()">
                                     <i class="fas fa-key"></i> Cambiar Contraseña
                                 </button>
-                            </div>
-                            <div class="pf-setting-item">
                                 <button class="pf-btn-danger" onclick="ProfileUtils.logout()">
                                     <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
                                 </button>
                             </div>
+                        </div>
                         </div>
 
                         <div class="pf-setting-group">
