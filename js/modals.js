@@ -3,11 +3,20 @@
  */
 
 function initAuthModals() {
+    if (window.__authModalsInitialized) {
+        return;
+    }
+
     createAuthModals();
     setupAuthModalEvents();
+    window.__authModalsInitialized = true;
 }
 
 function createAuthModals() {
+    if (document.getElementById('login-modal') || document.getElementById('register-modal')) {
+        return;
+    }
+
     const html = `
         <div id="login-modal" class="modal-overlay" style="display:none;">
             <div class="modal">

@@ -411,6 +411,12 @@ require_once __DIR__ . '/../backend/session/session_manager.php';
             // Limpiar la URL para evitar mostrar la notificación al recargar
             history.replaceState(null, '', window.location.pathname + window.location.search.replace(/[?&]logout=success/, ''));
         }
+
+        // Mostrar notificación si se redirige por falta de sesión
+        if (window.location.search.includes('auth=required')) {
+            showNotification('info', 'Debes iniciar sesión para acceder a esa sección');
+            history.replaceState(null, '', window.location.pathname + window.location.search.replace(/[?&]auth=required/, ''));
+        }
     </script>
 </body>
 </html>

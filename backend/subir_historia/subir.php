@@ -93,14 +93,26 @@ function handleSubirHistoria() {
 
     // Crear directorio para la historia basado en el título
     $tituloSlug = preg_replace('/[^a-zA-Z0-9-_]/', '_', $titulo); // Sanitizar título para nombre de carpeta
-    $historiaDir = __DIR__ . '/../../uploads/' . $tituloSlug;
+    if ($tituloSlug === '') {
+        $tituloSlug = 'historia';
+    }
+
+    $uploadsBaseDir = __DIR__ . '/../../uploads/';
+    $folderName = $tituloSlug;
+    $historiaDir = $uploadsBaseDir . $folderName;
+
+    if (is_dir($historiaDir)) {
+        $folderName = $tituloSlug . '_' . date('Ymd_His') . '_' . str_replace('.', '', uniqid('', true));
+        $historiaDir = $uploadsBaseDir . $folderName;
+    }
+
     if (!mkdir($historiaDir, 0755, true)) {
         echo json_encode(['success' => false, 'message' => 'Error al crear directorio']);
         return;
     }
 
     // Convertir rutas absolutas a relativas para DB
-    $baseUrl = '/uploads/' . $tituloSlug;
+    $baseUrl = '/uploads/' . $folderName;
 
     // Subir archivos
     $htmlPath = $historiaDir . '/' . basename($htmlFile['name']);

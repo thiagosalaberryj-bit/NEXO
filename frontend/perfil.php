@@ -1,5 +1,10 @@
 <?php
 require_once __DIR__ . '/../backend/session/session_manager.php';
+
+if (!isLoggedIn()) {
+    header('Location: explorar.php?auth=required');
+    exit();
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">

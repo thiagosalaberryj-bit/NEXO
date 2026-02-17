@@ -1,5 +1,9 @@
 <?php
 require_once __DIR__ . '/../backend/session/session_manager.php';
+if (!isLoggedIn()) {
+    header('Location: explorar.php?auth=required');
+    exit();
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -24,7 +28,7 @@ require_once __DIR__ . '/../backend/session/session_manager.php';
         })();
     </script>
 </head>
-<>
+<body>
     <div id="top"></div>
 
     <header id="header" class="navbar">
@@ -275,7 +279,6 @@ require_once __DIR__ . '/../backend/session/session_manager.php';
     <script src="../js/notifications.js"></script>
     <script src="../js/modals.js"></script>
     <script src="../js/subir-historia.js"></script>
-    </script>
 
     <!-- Modal para vista de imágenes -->
     <div id="image-modal" class="sh-modal">

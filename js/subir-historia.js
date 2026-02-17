@@ -575,10 +575,17 @@ document.addEventListener('DOMContentLoaded', () => {
             body: formData
         }).then(response => {
             console.log('Response status:', response.status);
-            if (!response.ok) {
-                throw new Error('HTTP ' + response.status);
-            }
-            return response.json();
+            return response.text().then(text => {
+                if (!response.ok) {
+                    throw new Error('HTTP ' + response.status + ': ' + text.slice(0, 180));
+                }
+
+                try {
+                    return JSON.parse(text);
+                } catch (parseError) {
+                    throw new Error('Respuesta inválida del servidor: ' + text.slice(0, 180));
+                }
+            });
         }).then(data => {
             console.log('Response data:', data);
             if (data.success) {
