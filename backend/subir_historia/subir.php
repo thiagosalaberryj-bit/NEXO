@@ -38,6 +38,10 @@ function handleSubirHistoria() {
     $estado = isset($_POST['estado']) ? $_POST['estado'] : 'borrador'; // 'borrador' o 'publicada'
     $colaboradores = isset($_POST['colaboradores']) ? json_decode($_POST['colaboradores'], true) : [];
     $nombreCarpetaRecursos = isset($_POST['nombre_carpeta_recursos']) ? trim($_POST['nombre_carpeta_recursos']) : 'contenido';
+    $nombreCarpetaRecursos = sanitizeFolderName($nombreCarpetaRecursos);
+    if ($nombreCarpetaRecursos === '') {
+        $nombreCarpetaRecursos = 'contenido';
+    }
 
     // Validaciones básicas
     if (empty($titulo) || empty($descripcion) || empty($genero)) {
@@ -144,7 +148,7 @@ function handleSubirHistoria() {
     $idHistoria = $conn->insert_id;
     $stmt->close();
 
-    // Si hay recursos, crear carpeta por defecto para la historia
+    // Si hay recursos, crear carpeta en BD y carpeta física dentro de la historia
     if (!empty($recursos['name'][0])) {
         // Crear carpeta con el nombre dado para esta historia
         $stmt = $conn->prepare("INSERT INTO carpetas_historia (id_historia, nombre_carpeta) VALUES (?, ?)");
@@ -152,6 +156,15 @@ function handleSubirHistoria() {
         $stmt->execute();
         $idCarpeta = $conn->insert_id;
         $stmt->close();
+
+        $recursosDir = $historiaDir . '/' . $nombreCarpetaRecursos;
+        if (!is_dir($recursosDir) && !mkdir($recursosDir, 0755, true)) {
+            cerrarConexion($conn);
+            echo json_encode(['success' => false, 'message' => 'Error al crear la carpeta de recursos']);
+            return;
+        }
+
+        $recursosBaseUrl = $baseUrl . '/' . $nombreCarpetaRecursos;
     }
 
     // Insertar recursos
@@ -159,9 +172,9 @@ function handleSubirHistoria() {
         for ($i = 0; $i < count($recursos['name']); $i++) {
             if ($recursos['error'][$i] !== UPLOAD_ERR_OK) continue;
 
-            $recursoPath = $historiaDir . '/' . basename($recursos['name'][$i]);
+            $recursoPath = $recursosDir . '/' . basename($recursos['name'][$i]);
             if (move_uploaded_file($recursos['tmp_name'][$i], $recursoPath)) {
-                $recursoRelPath = $baseUrl . '/' . basename($recursos['name'][$i]);
+                $recursoRelPath = $recursosBaseUrl . '/' . basename($recursos['name'][$i]);
                 $tipo = getFileType($recursos['type'][$i]);
                 $extension = pathinfo($recursos['name'][$i], PATHINFO_EXTENSION);
 
@@ -215,5 +228,11 @@ function getFileType($mime) {
     if (strpos($mime, 'video/') === 0) return 'video';
     if (in_array($mime, ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'])) return 'documento';
     return 'otro';
+}
+
+function sanitizeFolderName($name) {
+    $clean = preg_replace('/[^a-zA-Z0-9-_]/', '_', $name);
+    $clean = trim($clean, '_');
+    return $clean;
 }
 ?>
