@@ -1,5 +1,6 @@
 <?php
 require_once __DIR__ . '/../backend/session/session_manager.php';
+$isLogged = isLoggedIn();
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -54,21 +55,21 @@ require_once __DIR__ . '/../backend/session/session_manager.php';
                         <div class="stat-icon">
                             <i class="fas fa-book"></i>
                         </div>
-                        <div class="stat-number" data-target="247">0</div>
+                        <div class="stat-number" data-target="0" id="hero-total-historias">0</div>
                         <div class="stat-label">Historias</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-icon">
                             <i class="fas fa-users"></i>
                         </div>
-                        <div class="stat-number" data-target="1856">0</div>
+                        <div class="stat-number" data-target="0" id="hero-total-usuarios">0</div>
                         <div class="stat-label">Usuarios</div>
                     </div>
                     <div class="stat-card">
                         <div class="stat-icon">
                             <i class="fas fa-pen-fancy"></i>
                         </div>
-                        <div class="stat-number" data-target="89">0</div>
+                        <div class="stat-number" data-target="0" id="hero-total-escritores">0</div>
                         <div class="stat-label">Escritores</div>
                     </div>
                 </div>
@@ -122,11 +123,11 @@ require_once __DIR__ . '/../backend/session/session_manager.php';
                     </div>
 
                     <div class="filter-group">
-                        <label for="filter-status">Estado</label>
-                        <select id="filter-status">
-                            <option value="">Todos</option>
-                            <option value="completa">Completas</option>
-                            <option value="en-proceso">En proceso</option>
+                        <label for="filter-interaction">Interacción</label>
+                        <select id="filter-interaction">
+                            <option value="all">Todas las historias</option>
+                            <option value="favorites">Solo favoritas</option>
+                            <option value="commented">En las que comenté</option>
                         </select>
                     </div>
 
@@ -149,226 +150,7 @@ require_once __DIR__ . '/../backend/session/session_manager.php';
 
                 <!-- Grid de historias -->
                 <div id="stories-grid" class="stories-grid">
-                    <!-- Las historias se cargarán dinámicamente con JavaScript -->
-                    <!-- Ejemplo de tarjeta de historia -->
-                    <div class="story-card" data-story-id="1">
-                        <div class="story-cover">
-                            <img src="https://images.unsplash.com/photo-1516979187457-637abb4f9353?w=400" alt="Historia 1">
-                            <div class="story-overlay"></div>
-                            <!-- Indicador de formulario -->
-                            <div class="story-badge">
-                                <i class="fas fa-file-alt"></i>
-                                <span>Formulario</span>
-                            </div>
-                        </div>
-                        <div class="story-content">
-                            <h3 class="story-title">El Reino Perdido</h3>
-                            <p class="story-author">por Juan Pérez</p>
-                            <p class="story-description">Una aventura épica en un mundo de fantasía donde un joven héroe debe encontrar el reino perdido.</p>
-                            <div class="story-meta">
-                                <span class="story-genre"><i class="fas fa-tag"></i> Fantasía</span>
-                                <div class="story-stats">
-                                    <span><i class="fas fa-eye"></i> 1.2k</span>
-                                    <span class="stat-likes" data-likes="234"><i class="fas fa-heart"></i> 234</span>
-                                </div>
-                            </div>
-                            <!-- Botones de acción -->
-                            <div class="story-actions">
-                                <button class="action-btn like-btn" data-liked="false">
-                                    <i class="far fa-heart"></i>
-                                    <span>Like</span>
-                                </button>
-                                <button class="action-btn comment-btn">
-                                    <i class="far fa-comment"></i>
-                                    <span>Comentar</span>
-                                </button>
-                                <button class="action-btn read-btn">
-                                    <i class="fas fa-book-open"></i>
-                                    <span>Leer</span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="story-card" data-story-id="2">
-                        <div class="story-cover">
-                            <img src="https://images.unsplash.com/photo-1543002588-bfa74002ed7e?w=400" alt="Historia 2">
-                            <div class="story-overlay"></div>
-                        </div>
-                        <div class="story-content">
-                            <h3 class="story-title">Estrellas del Mañana</h3>
-                            <p class="story-author">por María García</p>
-                            <p class="story-description">En un futuro lejano, la humanidad coloniza nuevos planetas en busca de un hogar.</p>
-                            <div class="story-meta">
-                                <span class="story-genre"><i class="fas fa-tag"></i> Ciencia Ficción</span>
-                                <div class="story-stats">
-                                    <span><i class="fas fa-eye"></i> 856</span>
-                                    <span class="stat-likes" data-likes="189"><i class="fas fa-heart"></i> 189</span>
-                                </div>
-                            </div>
-                            <!-- Botones de acción -->
-                            <div class="story-actions">
-                                <button class="action-btn like-btn" data-liked="false">
-                                    <i class="far fa-heart"></i>
-                                    <span>Like</span>
-                                </button>
-                                <button class="action-btn comment-btn">
-                                    <i class="far fa-comment"></i>
-                                    <span>Comentar</span>
-                                </button>
-                                <button class="action-btn read-btn">
-                                    <i class="fas fa-book-open"></i>
-                                    <span>Leer</span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="story-card" data-story-id="3">
-                        <div class="story-cover">
-                            <img src="https://images.unsplash.com/photo-1519682337058-a94d519337bc?w=400" alt="Historia 3">
-                            <div class="story-overlay"></div>
-                        </div>
-                        <div class="story-content">
-                            <h3 class="story-title">Secretos del Pasado</h3>
-                            <p class="story-author">por Carlos López</p>
-                            <p class="story-description">Un misterio ancestral que conecta el presente con acontecimientos del pasado.</p>
-                            <div class="story-meta">
-                                <span class="story-genre"><i class="fas fa-tag"></i> Misterio</span>
-                                <div class="story-stats">
-                                    <span><i class="fas fa-eye"></i> 2.1k</span>
-                                    <span class="stat-likes" data-likes="456"><i class="fas fa-heart"></i> 456</span>
-                                </div>
-                            </div>
-                            <!-- Botones de acción -->
-                            <div class="story-actions">
-                                <button class="action-btn like-btn" data-liked="false">
-                                    <i class="far fa-heart"></i>
-                                    <span>Like</span>
-                                </button>
-                                <button class="action-btn comment-btn">
-                                    <i class="far fa-comment"></i>
-                                    <span>Comentar</span>
-                                </button>
-                                <button class="action-btn read-btn">
-                                    <i class="fas fa-book-open"></i>
-                                    <span>Leer</span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="story-card" data-story-id="4">
-                        <div class="story-cover">
-                            <img src="https://images.unsplash.com/photo-1474552226712-ac0f0961a954?w=400" alt="Historia 4">
-                            <div class="story-overlay"></div>
-                            <!-- Indicador de formulario -->
-                            <div class="story-badge">
-                                <i class="fas fa-file-alt"></i>
-                                <span>Formulario</span>
-                            </div>
-                        </div>
-                        <div class="story-content">
-                            <h3 class="story-title">Corazones Entrelazados</h3>
-                            <p class="story-author">por Ana Martínez</p>
-                            <p class="story-description">Una historia de amor que desafía las convenciones sociales y el tiempo.</p>
-                            <div class="story-meta">
-                                <span class="story-genre"><i class="fas fa-tag"></i> Romance</span>
-                                <div class="story-stats">
-                                    <span><i class="fas fa-eye"></i> 3.4k</span>
-                                    <span class="stat-likes" data-likes="678"><i class="fas fa-heart"></i> 678</span>
-                                </div>
-                            </div>
-                            <!-- Botones de acción -->
-                            <div class="story-actions">
-                                <button class="action-btn like-btn" data-liked="false">
-                                    <i class="far fa-heart"></i>
-                                    <span>Like</span>
-                                </button>
-                                <button class="action-btn comment-btn">
-                                    <i class="far fa-comment"></i>
-                                    <span>Comentar</span>
-                                </button>
-                                <button class="action-btn read-btn">
-                                    <i class="fas fa-book-open"></i>
-                                    <span>Leer</span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="story-card" data-story-id="5">
-                        <div class="story-cover">
-                            <img src="https://images.unsplash.com/photo-1475694867812-f82b8696d610?w=400" alt="Historia 5">
-                            <div class="story-overlay"></div>
-                        </div>
-                        <div class="story-content">
-                            <h3 class="story-title">La Casa del Silencio</h3>
-                            <p class="story-author">por Pedro Sánchez</p>
-                            <p class="story-description">Una mansión abandonada guarda secretos que nadie debería descubrir.</p>
-                            <div class="story-meta">
-                                <span class="story-genre"><i class="fas fa-tag"></i> Terror</span>
-                                <div class="story-stats">
-                                    <span><i class="fas fa-eye"></i> 1.8k</span>
-                                    <span class="stat-likes" data-likes="345"><i class="fas fa-heart"></i> 345</span>
-                                </div>
-                            </div>
-                            <!-- Botones de acción -->
-                            <div class="story-actions">
-                                <button class="action-btn like-btn" data-liked="false">
-                                    <i class="far fa-heart"></i>
-                                    <span>Like</span>
-                                </button>
-                                <button class="action-btn comment-btn">
-                                    <i class="far fa-comment"></i>
-                                    <span>Comentar</span>
-                                </button>
-                                <button class="action-btn read-btn">
-                                    <i class="fas fa-book-open"></i>
-                                    <span>Leer</span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="story-card" data-story-id="6">
-                        <div class="story-cover">
-                            <img src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400" alt="Historia 6">
-                            <div class="story-overlay"></div>
-                            <!-- Indicador de formulario -->
-                            <div class="story-badge">
-                                <i class="fas fa-file-alt"></i>
-                                <span>Formulario</span>
-                            </div>
-                        </div>
-                        <div class="story-content">
-                            <h3 class="story-title">Viaje al Amanecer</h3>
-                            <p class="story-author">por Laura Fernández</p>
-                            <p class="story-description">Una expedición hacia lo desconocido que cambiará la vida de sus protagonistas.</p>
-                            <div class="story-meta">
-                                <span class="story-genre"><i class="fas fa-tag"></i> Aventura</span>
-                                <div class="story-stats">
-                                    <span><i class="fas fa-eye"></i> 992</span>
-                                    <span class="stat-likes" data-likes="167"><i class="fas fa-heart"></i> 167</span>
-                                </div>
-                            </div>
-                            <!-- Botones de acción -->
-                            <div class="story-actions">
-                                <button class="action-btn like-btn" data-liked="false">
-                                    <i class="far fa-heart"></i>
-                                    <span>Like</span>
-                                </button>
-                                <button class="action-btn comment-btn">
-                                    <i class="far fa-comment"></i>
-                                    <span>Comentar</span>
-                                </button>
-                                <button class="action-btn read-btn">
-                                    <i class="fas fa-book-open"></i>
-                                    <span>Leer</span>
-                                </button>
-                            </div>
-                        </div>
-                    </div>
+                    <!-- Las historias se cargan dinámicamente con JavaScript -->
                 </div>
 
                 <!-- Sin resultados -->
@@ -377,6 +159,8 @@ require_once __DIR__ . '/../backend/session/session_manager.php';
                     <h3>No se encontraron historias</h3>
                     <p>Intenta ajustar los filtros o buscar con otros términos</p>
                 </div>
+
+                <div id="pagination" class="pagination"></div>
             </div>
         </section>
         </div> <!-- Cierre de content-sections -->
@@ -388,10 +172,38 @@ require_once __DIR__ . '/../backend/session/session_manager.php';
         </div>
     </footer>
 
+    <div id="comments-modal" class="comments-modal hidden" aria-hidden="true">
+        <div class="comments-modal-overlay" id="comments-modal-close"></div>
+        <div class="comments-modal-container" role="dialog" aria-modal="true" aria-labelledby="comments-modal-title">
+            <div class="comments-modal-header">
+                <h3 id="comments-modal-title">Comentarios</h3>
+                <button type="button" class="comments-modal-x" id="comments-modal-x" aria-label="Cerrar comentarios">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <div id="comments-modal-loading" class="comments-loading">Cargando comentarios...</div>
+
+            <div id="comments-modal-list" class="comments-list"></div>
+
+            <form id="comments-modal-form" class="comments-form">
+                <label for="comments-modal-input" class="comments-form-label">Escribe tu comentario</label>
+                <textarea id="comments-modal-input" rows="3" maxlength="500" placeholder="Comparte tu opinión sobre esta historia..."></textarea>
+                <div class="comments-form-footer">
+                    <small id="comments-modal-hint">Máximo 500 caracteres</small>
+                    <button type="submit" id="comments-modal-submit" class="comments-submit-btn">Publicar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <!-- Scripts separados -->
     <script src="../js/theme.js"></script>
     <script src="../js/navbar.js"></script>
     <script src="../js/api.js"></script>
+    <script>
+        window.NEXO_IS_LOGGED = <?php echo $isLogged ? 'true' : 'false'; ?>;
+    </script>
     <script src="../js/explorar.js"></script>
     <script src="../js/notifications.js"></script>
     <script src="../js/modals.js"></script>
