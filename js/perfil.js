@@ -9,6 +9,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const themeToggle = document.getElementById('theme-toggle-setting');
     const editAvatarBtn = document.getElementById('edit-avatar-btn');
 
+    // estado local
+    let allStories = [];
+
     // Navegación entre secciones
     navItems.forEach(item => {
         item.addEventListener('click', () => {
@@ -158,7 +161,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 throw new Error(data.message || 'No se pudieron cargar las historias');
             }
 
-            renderStories(data.historias);
+            allStories = data.historias;
+            renderStories(allStories);
+            setupStoryCardOptions();
         }).catch(error => {
             console.error('Error cargando historias:', error);
             if (typeof showNotification === 'function') {
@@ -188,27 +193,37 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         storiesGrid.innerHTML = stories.map(story => {
-            const estadoClass = story.estado === 'publicada' ? 'Publicado' : 'Borrador';
             const fecha = formatDate(story.fecha_creacion);
             const descripcion = escapeHtml((story.descripcion || '').trim());
             const descripcionCorta = descripcion.length > 120 ? descripcion.slice(0, 120) + '...' : descripcion;
+            const portadaUrl = story.portada ? getBaseUrl() + story.portada : 'https://via.placeholder.com/400x240?text=Sin+Portada';
 
             return `
-                <article class="pf-form-item">
-                    <div class="pf-form-icon"><i class="fas fa-book"></i></div>
-                    <div class="pf-form-info">
-                        <h3>${escapeHtml(story.titulo || 'Sin título')}</h3>
-                        <p>${descripcionCorta || 'Sin descripción'}</p>
-                        <div class="pf-form-meta">
-                            <span><i class="fas fa-tag"></i> ${escapeHtml(story.genero || 'Sin género')}</span>
-                            <span><i class="fas fa-circle"></i> ${estadoClass}</span>
-                            <span><i class="fas fa-calendar"></i> ${fecha}</span>
+                <article class="pf-story-card" data-story-id="${story.id_historia}">
+                    <div class="pf-story-cover">
+                        <img src="${escapeHtml(portadaUrl)}" alt="Portada de ${escapeHtml(story.titulo || 'historia')}" loading="lazy">
+                        <div class="pf-story-overlay"></div>
+                        <button type="button" class="pf-story-toggle" data-card-toggle aria-label="Opciones">
+                            <i class="fas fa-ellipsis-v"></i>
+                        </button>
+                    </div>
+                    <div class="pf-story-content">
+                        <h3 class="pf-story-title">${escapeHtml(story.titulo || 'Sin título')}</h3>
+                        <p class="pf-story-description">${descripcionCorta || 'Sin descripción'}</p>
+                        <div class="pf-story-meta">
+                            <span class="pf-story-genre"><i class="fas fa-tag"></i> ${escapeHtml(story.genero || 'Sin género')}</span>
+                            <div class="pf-story-stats">
+                                <span><i class="fas fa-eye"></i> ${story.total_vistas || 0}</span>
+                                <span><i class="fas fa-heart"></i> ${story.total_likes || 0}</span>
+                                <span><i class="fas fa-comments"></i> ${story.total_comentarios || 0}</span>
+                            </div>
                         </div>
-                        <div class="pf-form-meta">
-                            <span><i class="fas fa-eye"></i> ${story.total_vistas || 0}</span>
-                            <span><i class="fas fa-heart"></i> ${story.total_likes || 0}</span>
-                            <span><i class="fas fa-comments"></i> ${story.total_comentarios || 0}</span>
-                        </div>
+                    </div>
+                    <div class="pf-story-options-menu" data-card-menu>
+                        <button type="button" class="pf-story-option-btn" data-card-action="read" data-story-id="${story.id_historia}">Leer historia</button>
+                        <button type="button" class="pf-story-option-btn" data-card-action="edit" data-story-id="${story.id_historia}">Modificar</button>
+                        <button type="button" class="pf-story-option-btn" data-card-action="status" data-story-id="${story.id_historia}">${story.estado === 'publicada' ? 'Pasar a borrador' : 'Publicar historia'}</button>
+                        <button type="button" class="pf-story-option-btn" data-card-action="versions" data-story-id="${story.id_historia}">Versiones</button>
                     </div>
                 </article>
             `;
@@ -229,6 +244,60 @@ document.addEventListener('DOMContentLoaded', () => {
             day: '2-digit',
             month: '2-digit',
             year: 'numeric'
+        });
+    }
+
+    function setupStoryCardOptions() {
+        const storiesGrid = document.getElementById('stories-grid');
+        if (!storiesGrid) return;
+
+        storiesGrid.addEventListener('click', (event) => {
+            const toggleBtn = event.target.closest('[data-card-toggle]');
+            const actionBtn = event.target.closest('[data-card-action]');
+
+            if (toggleBtn) {
+                const card = toggleBtn.closest('.pf-story-card');
+                const menu = card ? card.querySelector('[data-card-menu]') : null;
+
+                storiesGrid.querySelectorAll('[data-card-menu].show').forEach(m => {
+                    if (m !== menu) m.classList.remove('show');
+                });
+
+                if (menu) menu.classList.toggle('show');
+                return;
+            }
+
+            if (actionBtn) {
+                const action = actionBtn.getAttribute('data-card-action');
+                const storyId = actionBtn.getAttribute('data-story-id');
+
+                if (action === 'read') {
+                    // abrir sin contar vistas: usamos la ruta del archivo twine si está disponible
+                    const story = allStories.find(s => String(s.id_historia) === storyId);
+                    if (story && story.archivo_twine) {
+                        window.open(getBaseUrl() + story.archivo_twine, '_blank');
+                    } else {
+                        if (typeof showNotification === 'function') {
+                            showNotification('error', 'No hay archivo disponible para esta historia');
+                        }
+                    }
+                } else {
+                    if (typeof showNotification === 'function') {
+                        if (action === 'edit') showNotification('info', 'Edición de historia próximamente');
+                        else if (action === 'status') showNotification('info', 'Cambio de estado próximamente');
+                        else if (action === 'versions') showNotification('info', 'Gestión de versiones próximamente');
+                    }
+                }
+
+                const m = actionBtn.closest('[data-card-menu]');
+                if (m) m.classList.remove('show');
+            }
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.pf-story-card')) {
+                storiesGrid.querySelectorAll('[data-card-menu].show').forEach(m => m.classList.remove('show'));
+            }
         });
     }
 
