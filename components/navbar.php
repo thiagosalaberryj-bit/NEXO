@@ -45,9 +45,10 @@ function render_navbar($currentPage = null) {
         $nav .= "        <div class=\"user-menu user-menu-desktop\">\n";
         $nav .= "            <button id=\"user-toggle\" class=\"user-toggle\" aria-label=\"Menú de usuario\">\n";
         $nav .= "                <i class=\"fas fa-user\"></i> <span>{$safeName}</span>\n";
+        $nav .= "                <span id=\"invitation-dot\" class=\"invitation-dot hidden\" aria-hidden=\"true\"></span>\n";
         $nav .= "            </button>\n";
         $nav .= "            <div class=\"user-dropdown\">\n";
-        $nav .= "                <a href=\"estadisticas.php\"><i class=\"fas fa-chart-bar\"></i> Estadísticas</a>\n";
+        $nav .= "                <a href=\"#\" id=\"open-notifications\"><i class=\"fas fa-envelope\"></i> Notificaciones <span id=\"invitation-count\" class=\"invitation-count\">0</span></a>\n";
         $nav .= "                <a href=\"#\" onclick=\"handleAjaxLogout(event)\"><i class=\"fas fa-sign-out-alt\"></i> Cerrar Sesión</a>\n";
         $nav .= "            </div>\n";
         $nav .= "        </div>\n";
@@ -61,6 +62,36 @@ function render_navbar($currentPage = null) {
 
     $nav .= "    </div>\n";
     $nav .= "</div>\n";
+
+    if ($isLogged) {
+        $nav .= "<div id=\"notifications-modal\" class=\"notifications-modal hidden\" aria-hidden=\"true\">\n";
+        $nav .= "    <div class=\"notifications-modal-overlay\" id=\"notifications-modal-close\"></div>\n";
+        $nav .= "    <div class=\"notifications-modal-container\" role=\"dialog\" aria-modal=\"true\" aria-labelledby=\"notifications-modal-title\">\n";
+        $nav .= "        <div class=\"notifications-modal-header\">\n";
+        $nav .= "            <div class=\"notifications-header-top\">\n";
+        $nav .= "                <h3 id=\"notifications-modal-title\">Notificaciones</h3>\n";
+        $nav .= "                <button type=\"button\" class=\"notifications-modal-x\" id=\"notifications-modal-x\" aria-label=\"Cerrar\">\n";
+        $nav .= "                    <i class=\"fas fa-times\"></i>\n";
+        $nav .= "                </button>\n";
+        $nav .= "            </div>\n";
+        $nav .= "            <div class=\"notifications-header-filters\">\n";
+        $nav .= "                <input type=\"text\" id=\"notifications-search\" class=\"notifications-search\" placeholder=\"Filtrar por usuario o historia...\">\n";
+        $nav .= "                <select id=\"notifications-filter-status\" class=\"notifications-filter\">\n";
+        $nav .= "                    <option value=\"all\">Todos los estados</option>\n";
+        $nav .= "                    <option value=\"pendiente\">Pendientes</option>\n";
+        $nav .= "                    <option value=\"aceptada\">Aceptadas</option>\n";
+        $nav .= "                    <option value=\"rechazada\">Rechazadas</option>\n";
+        $nav .= "                </select>\n";
+        $nav .= "                <select id=\"notifications-filter-date\" class=\"notifications-filter\">\n";
+        $nav .= "                    <option value=\"recent\">Mas recientes</option>\n";
+        $nav .= "                    <option value=\"oldest\">Mas antiguas</option>\n";
+        $nav .= "                </select>\n";
+        $nav .= "            </div>\n";
+        $nav .= "        </div>\n";
+        $nav .= "        <div id=\"notifications-modal-list\" class=\"notifications-list\"></div>\n";
+        $nav .= "    </div>\n";
+        $nav .= "</div>\n";
+    }
 
     echo $nav;
 }

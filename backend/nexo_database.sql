@@ -137,11 +137,26 @@ CREATE TABLE invitaciones_colaboradores (
     id_invitador INT NOT NULL, -- Usuario que envía la invitación
     id_invitado INT NOT NULL, -- Usuario invitado
     estado ENUM('pendiente', 'aceptada', 'rechazada') DEFAULT 'pendiente',
+    visto_invitador BOOLEAN DEFAULT FALSE,
+    visto_invitado BOOLEAN DEFAULT FALSE,
     fecha_invitacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     UNIQUE KEY unique_invitacion (id_historia, id_invitado), -- Evita invitaciones duplicadas
     FOREIGN KEY (id_historia) REFERENCES historias(id_historia) ON DELETE CASCADE,
     FOREIGN KEY (id_invitador) REFERENCES usuarios(id_usuario) ON DELETE CASCADE,
     FOREIGN KEY (id_invitado) REFERENCES usuarios(id_usuario) ON DELETE CASCADE
+);
+
+-- Tabla de notificaciones del sistema
+CREATE TABLE notificaciones (
+    id_notificacion INT PRIMARY KEY AUTO_INCREMENT,
+    id_usuario INT NOT NULL, -- Usuario que recibe la notificación
+    tipo ENUM('invitacion_pendiente', 'invitacion_aceptada', 'invitacion_rechazada') NOT NULL,
+    id_referencia INT DEFAULT NULL, -- Referencia a id_invitacion u otra entidad
+    titulo VARCHAR(180) NOT NULL,
+    mensaje VARCHAR(255) NOT NULL,
+    leida BOOLEAN DEFAULT FALSE,
+    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario) ON DELETE CASCADE
 );
 CREATE INDEX idx_visualizacion_historia ON visualizaciones(id_historia);
 CREATE INDEX idx_visualizacion_usuario ON visualizaciones(id_usuario);
@@ -158,6 +173,14 @@ CREATE INDEX idx_respuesta_usuario ON respuestas_formulario(id_usuario);
 CREATE INDEX idx_invitacion_historia ON invitaciones_colaboradores(id_historia);
 CREATE INDEX idx_invitacion_invitador ON invitaciones_colaboradores(id_invitador);
 CREATE INDEX idx_invitacion_invitado ON invitaciones_colaboradores(id_invitado);
+CREATE INDEX idx_invitacion_estado ON invitaciones_colaboradores(estado);
+CREATE INDEX idx_invitacion_visto_invitador ON invitaciones_colaboradores(visto_invitador);
+CREATE INDEX idx_invitacion_visto_invitado ON invitaciones_colaboradores(visto_invitado);
+
+-- Índices para notificaciones
+CREATE INDEX idx_notificacion_usuario ON notificaciones(id_usuario);
+CREATE INDEX idx_notificacion_leida ON notificaciones(leida);
+CREATE INDEX idx_notificacion_tipo ON notificaciones(tipo);
 
 -- Índices para carpetas_historia
 CREATE INDEX idx_carpeta_historia ON carpetas_historia(id_historia);
