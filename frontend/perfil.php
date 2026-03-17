@@ -44,7 +44,9 @@ if (!isLoggedIn()) {
             <aside class="pf-sidebar">
                 <div class="pf-user-info">
                     <div class="pf-avatar">
-                        <img src="" alt="">
+                        <div class="pf-avatar-icon" id="avatar-icon">
+                            <i class="fas fa-user"></i>
+                        </div>
                         <button class="pf-avatar-edit" id="edit-avatar-btn">
                             <i class="fas fa-camera"></i>
                         </button>
