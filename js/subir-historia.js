@@ -1,6 +1,6 @@
 /**
  * Subir Historia – Wizard multi-paso
- * Solo visual / UI, sin conexión con backend
+ * UI con integracion de backend para busqueda de usuarios y subida de historias
  */
 
 document.addEventListener('DOMContentLoaded', () => {

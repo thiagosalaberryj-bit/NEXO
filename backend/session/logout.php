@@ -19,7 +19,11 @@ if ($isAjax) {
         'message' => 'Sesión cerrada correctamente'
     ]);
 } else {
-    // Redirección normal para navegación directa
-    header('Location: /PROYECTO_NEXO/index.html?logout=success');
+    // Redireccion normal para navegacion directa (evita ruta hardcodeada)
+    $scriptName = isset($_SERVER['SCRIPT_NAME']) ? str_replace('\\', '/', $_SERVER['SCRIPT_NAME']) : '';
+    $projectBase = rtrim(dirname(dirname(dirname($scriptName))), '/');
+    $redirectUrl = ($projectBase !== '' ? $projectBase : '') . '/frontend/explorar.php?logout=success';
+
+    header('Location: ' . $redirectUrl);
 }
 exit();
