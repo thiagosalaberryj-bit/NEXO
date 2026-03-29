@@ -93,7 +93,29 @@ document.addEventListener('DOMContentLoaded', () => {
         // Cerrar sesión
         logout: function() {
             if (confirm('¿Estás seguro de que quieres cerrar sesión?')) {
-                window.location.href = '../backend/session/logout.php';
+                if (typeof handleAjaxLogout === 'function') {
+                    handleAjaxLogout({
+                        preventDefault: function() {}
+                    });
+                    return;
+                }
+
+                apiFetch('/backend/session/logout.php', {
+                    method: 'POST',
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                }).then(response => response.json()).then(data => {
+                    if (data.success) {
+                        window.location.href = getBaseUrl() + '/frontend/explorar.php?logout=success';
+                    } else if (typeof showNotification === 'function') {
+                        showNotification('error', data.message || 'Error al cerrar sesión');
+                    }
+                }).catch(() => {
+                    if (typeof showNotification === 'function') {
+                        showNotification('error', 'Error de conexión');
+                    }
+                });
             }
         },
 

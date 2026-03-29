@@ -14,6 +14,12 @@ if ($_SERVER['REQUEST_METHOD'] !== 'GET') {
     exit();
 }
 
+if (!isLoggedIn()) {
+    http_response_code(401);
+    echo json_encode(['success' => false, 'message' => 'Sesion no valida']);
+    exit();
+}
+
 $query = isset($_GET['q']) ? trim($_GET['q']) : '';
 
 if (empty($query) || strlen($query) < 2) {

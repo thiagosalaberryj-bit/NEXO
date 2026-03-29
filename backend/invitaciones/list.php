@@ -171,9 +171,10 @@ try {
     ]);
 } catch (Throwable $e) {
     http_response_code(500);
+    error_log('Invitaciones list error: ' . $e->getMessage());
     echo json_encode([
         'success' => false,
-        'message' => $e->getMessage()
+        'message' => 'No se pudieron obtener las invitaciones'
     ]);
 } finally {
     cerrarConexion($conn);

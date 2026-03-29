@@ -13,6 +13,9 @@ function isLoggedIn() {
 }
 
 function loginUser($userId, $userName, $userEmail, $userUsername = '') {
+    // Evita session fixation al iniciar sesion
+    session_regenerate_id(true);
+
     $_SESSION['user_id'] = $userId;
     $_SESSION['user_name'] = $userName;
     $_SESSION['user_email'] = $userEmail;

@@ -5,6 +5,16 @@
 
 require_once __DIR__ . '/session_manager.php';
 
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(405);
+    header('Content-Type: application/json');
+    echo json_encode([
+        'success' => false,
+        'message' => 'Metodo no permitido'
+    ]);
+    exit();
+}
+
 // Verificar si es una petición AJAX
 $isAjax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) &&
           strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
