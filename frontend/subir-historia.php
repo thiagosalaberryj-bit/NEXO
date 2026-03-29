@@ -296,14 +296,5 @@ if (!isLoggedIn()) {
         </div>
     </div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            if (typeof initThemeToggle === 'function') initThemeToggle();
-            if (typeof initUserMenu === 'function') initUserMenu();
-            if (typeof setActiveNavLink === 'function') setActiveNavLink();
-            if (typeof initNavbar === 'function') initNavbar();
-            if (typeof initAuthModals === 'function') initAuthModals();
-        });
-    </script>
 </body>
 </html>

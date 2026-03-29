@@ -215,7 +215,6 @@ if (!isLoggedIn()) {
                                 </button>
                             </div>
                         </div>
-                        </div>
 
                         <div class="pf-setting-group">
                             <h3>Privacidad</h3>
@@ -260,15 +259,6 @@ if (!isLoggedIn()) {
     <script src="../js/modals.js"></script>
     <script src="../js/perfil.js"></script>
     <script>
-        // Inicializar utilidades ahora que el navbar se incluye en el servidor
-        document.addEventListener('DOMContentLoaded', function() {
-            if (typeof initThemeToggle === 'function') initThemeToggle();
-            if (typeof initUserMenu === 'function') initUserMenu();
-            if (typeof setActiveNavLink === 'function') setActiveNavLink();
-            if (typeof initNavbar === 'function') initNavbar();
-            if (typeof initAuthModals === 'function') initAuthModals();
-        });
-
         // Mostrar notificación de logout si viene de cerrar sesión
         if (window.location.search.includes('logout=success')) {
             showNotification('success', 'Sesión cerrada correctamente');

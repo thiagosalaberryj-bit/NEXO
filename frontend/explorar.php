@@ -208,15 +208,6 @@ $isLogged = isLoggedIn();
     <script src="../js/notifications.js"></script>
     <script src="../js/modals.js"></script>
     <script>
-        // Inicializar utilidades ahora que el navbar se incluye en el servidor
-        document.addEventListener('DOMContentLoaded', function() {
-            if (typeof initThemeToggle === 'function') initThemeToggle();
-            if (typeof initMobileMenu === 'function') initMobileMenu();
-            if (typeof initUserMenu === 'function') initUserMenu();
-            if (typeof setActiveNavLink === 'function') setActiveNavLink();
-            if (typeof initAuthModals === 'function') initAuthModals();
-        });
-
         // Mostrar notificación de logout si viene de cerrar sesión
         if (window.location.search.includes('logout=success')) {
             showNotification('success', 'Sesión cerrada correctamente');
