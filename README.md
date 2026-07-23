@@ -50,22 +50,3 @@ NEXO/
 4. Asegurar que `uploads/` tenga permisos de escritura
 5. Acceder vía navegador a `http://localhost/NEXO`
 
-## Funcionalidades principales
-
-- [x] Landing page institucional
-- [x] Registro e inicio de sesión de usuarios
-- [x] Explorar historias con filtros (género, búsqueda, ordenamiento)
-- [x] Likes y comentarios en historias
-- [x] Subida de historias (HTML + portada + recursos)
-- [x] Perfil de usuario con historias propias
-- [x] Sistema de invitaciones a colaboradores
-- [x] Modo oscuro / claro
-- [x] Paginación y estadísticas básicas
-- [ ] Versiones de historias (próximamente)
-- [ ] Formularios interactivos (próximamente)
-- [ ] Edición de perfil (próximamente)
-- [ ] Docker (próximamente)
-
-## Licencia
-
-Proyecto educativo de la E.S.T. N°1 de Vicente López.
