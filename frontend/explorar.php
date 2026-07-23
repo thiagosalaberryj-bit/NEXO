@@ -1,5 +1,5 @@
 <?php
-require_once __DIR__ . '/../backend/session/session_manager.php';
+require_once __DIR__ . '/../api/auth/session.php';
 $isLogged = isLoggedIn();
 ?>
 <!DOCTYPE html>
