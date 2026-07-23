@@ -144,9 +144,8 @@ function handleLoginSubmit(event) {
     event.preventDefault();
     var form = event.target;
     var formData = new FormData(form);
-    formData.append('action', 'login');
 
-    apiFetch('/backend/session/auth.php', {
+    apiFetch('/api/auth/login.php', {
         method: 'POST',
         body: formData
     }).then(function(response) {
@@ -154,10 +153,8 @@ function handleLoginSubmit(event) {
     }).then(function(data) {
         if (data.success) {
             closeLoginModal();
-            // Mostrar notificación rápida y recargar para que el servidor renderice el navbar correcto
             showNotification('success', '¡Bienvenido! Sesión iniciada correctamente');
             setTimeout(function() {
-                // Recargar la página actual para reflejar el estado de sesión en el navbar
                 window.location.reload();
             }, 800);
         } else {
@@ -181,9 +178,8 @@ function handleRegisterSubmit(event) {
     }
 
     var formData = new FormData(form);
-    formData.append('action', 'register');
 
-    apiFetch('/backend/session/auth.php', {
+    apiFetch('/api/auth/register.php', {
         method: 'POST',
         body: formData
     }).then(function(response) {
@@ -205,7 +201,7 @@ function handleRegisterSubmit(event) {
 function handleAjaxLogout(event) {
     event.preventDefault();
 
-    apiFetch('/backend/session/logout.php', {
+    apiFetch('/api/auth/logout.php', {
         method: 'POST',
         headers: {
             'X-Requested-With': 'XMLHttpRequest'
