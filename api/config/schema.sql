@@ -1,0 +1,224 @@
+-- NEXO - Esquema de base de datos
+-- Plataforma de Historias Interactivas
+-- E.S.T. N°1 de Vicente López
+
+CREATE DATABASE IF NOT EXISTS nexo_database CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+USE nexo_database;
+
+-- ============================================================
+-- USUARIOS
+-- ============================================================
+CREATE TABLE usuarios (
+    id_usuario INT PRIMARY KEY AUTO_INCREMENT,
+    nombre VARCHAR(100) NOT NULL,
+    apellido VARCHAR(100) NOT NULL,
+    username VARCHAR(50) UNIQUE NOT NULL,
+    email VARCHAR(150) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    tipo_usuario ENUM('estudiante', 'profesor', 'admin') NOT NULL DEFAULT 'estudiante',
+    fecha_registro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    activo BOOLEAN DEFAULT TRUE
+);
+
+-- ============================================================
+-- HISTORIAS
+-- ============================================================
+CREATE TABLE historias (
+    id_historia INT PRIMARY KEY AUTO_INCREMENT,
+    titulo VARCHAR(200) NOT NULL,
+    descripcion TEXT,
+    id_autor INT NOT NULL,
+    portada VARCHAR(255) NOT NULL,
+    archivo_twine VARCHAR(255) NOT NULL,
+    id_version_activa INT DEFAULT NULL,
+    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    fecha_modificacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    estado ENUM('borrador', 'publicada') DEFAULT 'borrador',
+    genero VARCHAR(50),
+    FOREIGN KEY (id_autor) REFERENCES usuarios(id_usuario) ON DELETE CASCADE
+);
+
+-- ============================================================
+-- VERSIONES DE HISTORIAS (solo HTML, recursos compartidos)
+-- ============================================================
+CREATE TABLE versiones_historia (
+    id_version INT PRIMARY KEY AUTO_INCREMENT,
+    id_historia INT NOT NULL,
+    id_autor INT NOT NULL,
+    archivo_html VARCHAR(255) NOT NULL,
+    mensaje_cambio VARCHAR(500),
+    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_historia) REFERENCES historias(id_historia) ON DELETE CASCADE,
+    FOREIGN KEY (id_autor) REFERENCES usuarios(id_usuario) ON DELETE CASCADE
+);
+
+-- ============================================================
+-- CARPETAS DE RECURSOS
+-- ============================================================
+CREATE TABLE carpetas_historia (
+    id_carpeta INT PRIMARY KEY AUTO_INCREMENT,
+    id_historia INT NOT NULL,
+    nombre_carpeta VARCHAR(100) NOT NULL,
+    descripcion TEXT,
+    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_historia) REFERENCES historias(id_historia) ON DELETE CASCADE
+);
+
+-- ============================================================
+-- CONTENIDO (archivos multimedia compartidos entre versiones)
+-- ============================================================
+CREATE TABLE contenido_historia (
+    id_contenido INT PRIMARY KEY AUTO_INCREMENT,
+    id_historia INT NOT NULL,
+    id_carpeta INT DEFAULT NULL,
+    nombre_archivo VARCHAR(255) NOT NULL,
+    ruta_archivo VARCHAR(500) NOT NULL,
+    tipo_archivo ENUM('imagen', 'audio', 'video', 'documento', 'otro') DEFAULT 'otro',
+    extension VARCHAR(10),
+    tamano_bytes INT,
+    fecha_subida TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_historia) REFERENCES historias(id_historia) ON DELETE CASCADE,
+    FOREIGN KEY (id_carpeta) REFERENCES carpetas_historia(id_carpeta) ON DELETE SET NULL
+);
+
+-- ============================================================
+-- VISUALIZACIONES
+-- ============================================================
+CREATE TABLE visualizaciones (
+    id_visualizacion INT PRIMARY KEY AUTO_INCREMENT,
+    id_historia INT NOT NULL,
+    id_usuario INT NOT NULL,
+    fecha_visualizacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY unique_visualizacion (id_historia, id_usuario),
+    FOREIGN KEY (id_historia) REFERENCES historias(id_historia) ON DELETE CASCADE,
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario) ON DELETE CASCADE
+);
+
+-- ============================================================
+-- LIKES
+-- ============================================================
+CREATE TABLE likes (
+    id_like INT PRIMARY KEY AUTO_INCREMENT,
+    id_historia INT NOT NULL,
+    id_usuario INT NOT NULL,
+    fecha_like TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY unique_like (id_historia, id_usuario),
+    FOREIGN KEY (id_historia) REFERENCES historias(id_historia) ON DELETE CASCADE,
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario) ON DELETE CASCADE
+);
+
+-- ============================================================
+-- COMENTARIOS
+-- ============================================================
+CREATE TABLE comentarios (
+    id_comentario INT PRIMARY KEY AUTO_INCREMENT,
+    id_historia INT NOT NULL,
+    id_usuario INT NOT NULL,
+    contenido TEXT NOT NULL,
+    fecha_comentario TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_historia) REFERENCES historias(id_historia) ON DELETE CASCADE,
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario) ON DELETE CASCADE
+);
+
+-- ============================================================
+-- FORMULARIOS (creados por el autor de la historia)
+-- ============================================================
+CREATE TABLE formularios (
+    id_formulario INT PRIMARY KEY AUTO_INCREMENT,
+    id_historia INT NOT NULL,
+    titulo VARCHAR(200) NOT NULL,
+    descripcion TEXT,
+    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY unique_formulario_historia (id_historia),
+    FOREIGN KEY (id_historia) REFERENCES historias(id_historia) ON DELETE CASCADE
+);
+
+CREATE TABLE preguntas_formulario (
+    id_pregunta INT PRIMARY KEY AUTO_INCREMENT,
+    id_formulario INT NOT NULL,
+    pregunta TEXT NOT NULL,
+    tipo_pregunta ENUM('texto', 'multiple_opcion', 'verdadero_falso', 'escala') DEFAULT 'texto',
+    orden INT NOT NULL,
+    obligatoria BOOLEAN DEFAULT FALSE,
+    FOREIGN KEY (id_formulario) REFERENCES formularios(id_formulario) ON DELETE CASCADE
+);
+
+CREATE TABLE opciones_pregunta (
+    id_opcion INT PRIMARY KEY AUTO_INCREMENT,
+    id_pregunta INT NOT NULL,
+    opcion TEXT NOT NULL,
+    orden INT NOT NULL,
+    FOREIGN KEY (id_pregunta) REFERENCES preguntas_formulario(id_pregunta) ON DELETE CASCADE
+);
+
+CREATE TABLE respuestas_formulario (
+    id_respuesta INT PRIMARY KEY AUTO_INCREMENT,
+    id_pregunta INT NOT NULL,
+    id_usuario INT NOT NULL,
+    respuesta_texto TEXT,
+    id_opcion_seleccionada INT,
+    fecha_respuesta TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_pregunta) REFERENCES preguntas_formulario(id_pregunta) ON DELETE CASCADE,
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario) ON DELETE CASCADE,
+    FOREIGN KEY (id_opcion_seleccionada) REFERENCES opciones_pregunta(id_opcion) ON DELETE SET NULL
+);
+
+-- ============================================================
+-- INVITACIONES A COLABORADORES
+-- ============================================================
+CREATE TABLE invitaciones_colaboradores (
+    id_invitacion INT PRIMARY KEY AUTO_INCREMENT,
+    id_historia INT NOT NULL,
+    id_invitador INT NOT NULL,
+    id_invitado INT NOT NULL,
+    estado ENUM('pendiente', 'aceptada', 'rechazada') DEFAULT 'pendiente',
+    visto_invitador BOOLEAN DEFAULT FALSE,
+    visto_invitado BOOLEAN DEFAULT FALSE,
+    fecha_invitacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY unique_invitacion (id_historia, id_invitado),
+    FOREIGN KEY (id_historia) REFERENCES historias(id_historia) ON DELETE CASCADE,
+    FOREIGN KEY (id_invitador) REFERENCES usuarios(id_usuario) ON DELETE CASCADE,
+    FOREIGN KEY (id_invitado) REFERENCES usuarios(id_usuario) ON DELETE CASCADE
+);
+
+-- ============================================================
+-- NOTIFICACIONES
+-- ============================================================
+CREATE TABLE notificaciones (
+    id_notificacion INT PRIMARY KEY AUTO_INCREMENT,
+    id_usuario INT NOT NULL,
+    tipo ENUM('invitacion_pendiente', 'invitacion_aceptada', 'invitacion_rechazada') NOT NULL,
+    id_referencia INT DEFAULT NULL,
+    titulo VARCHAR(180) NOT NULL,
+    mensaje VARCHAR(255) NOT NULL,
+    leida BOOLEAN DEFAULT FALSE,
+    fecha_creacion TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (id_usuario) REFERENCES usuarios(id_usuario) ON DELETE CASCADE
+);
+
+-- ============================================================
+-- ÍNDICES
+-- ============================================================
+CREATE INDEX idx_visualizacion_historia ON visualizaciones(id_historia);
+CREATE INDEX idx_visualizacion_usuario ON visualizaciones(id_usuario);
+CREATE INDEX idx_like_historia ON likes(id_historia);
+CREATE INDEX idx_like_usuario ON likes(id_usuario);
+CREATE INDEX idx_comentario_historia ON comentarios(id_historia);
+CREATE INDEX idx_comentario_usuario ON comentarios(id_usuario);
+CREATE INDEX idx_formulario_historia ON formularios(id_historia);
+CREATE INDEX idx_pregunta_formulario ON preguntas_formulario(id_formulario);
+CREATE INDEX idx_respuesta_pregunta ON respuestas_formulario(id_pregunta);
+CREATE INDEX idx_respuesta_usuario ON respuestas_formulario(id_usuario);
+CREATE INDEX idx_invitacion_historia ON invitaciones_colaboradores(id_historia);
+CREATE INDEX idx_invitacion_invitador ON invitaciones_colaboradores(id_invitador);
+CREATE INDEX idx_invitacion_invitado ON invitaciones_colaboradores(id_invitado);
+CREATE INDEX idx_invitacion_estado ON invitaciones_colaboradores(estado);
+CREATE INDEX idx_notificacion_usuario ON notificaciones(id_usuario);
+CREATE INDEX idx_notificacion_leida ON notificaciones(leida);
+CREATE INDEX idx_notificacion_tipo ON notificaciones(tipo);
+CREATE INDEX idx_carpeta_historia ON carpetas_historia(id_historia);
+CREATE INDEX idx_contenido_historia ON contenido_historia(id_historia);
+CREATE INDEX idx_contenido_carpeta ON contenido_historia(id_carpeta);
+CREATE INDEX idx_versiones_historia ON versiones_historia(id_historia);
+
+ALTER TABLE historias ADD FOREIGN KEY (id_version_activa) REFERENCES versiones_historia(id_version) ON DELETE SET NULL;
